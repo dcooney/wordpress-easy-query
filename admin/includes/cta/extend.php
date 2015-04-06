@@ -1,0 +1,1 @@
+<div class="clear"></div><div class="call-out"><i class="fa fa-unlock"></i> <?php _e('Unlock unlimited templates with <a href="https://connekthq.com/plugins/easy-query/pro/" target="_parent">Easy Query Pro</a>', EWPQ_NAME); ?></div>
