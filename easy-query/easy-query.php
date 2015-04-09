@@ -12,7 +12,7 @@ Copyright: Darren Cooney & Connekt Media
 */	
 	
 define('EWPQ_VERSION', '1.0.0');
-define('EWPQ_RELEASE', 'April 6, 2015');
+define('EWPQ_RELEASE', 'April 5, 2015');
 
 /*
 *  ewpq_install
@@ -338,9 +338,9 @@ if( !class_exists('EasyQuery') ):
    		if ($eq_query->have_posts()) : 
    		   
    		   $eq_count = $paged * $posts_per_page - $posts_per_page; // Count items
-   		   $output .= '<div class="wp-easy-query '. $classes.'" data-total-posts="'. $eq_total_posts .'">';   		   
+   		   $output .= '<div class="wp-easy-query" data-total-posts="'. $eq_total_posts .'">';   		   
    			$output .= '<div class="wp-easy-query-posts">';  	
-   			$output .= '<' . $container . '>';  		   
+   			$output .= '<' . $container . ' class="'. $classes.'">';  		   
    			while ($eq_query->have_posts()): $eq_query->the_post();	
    				$eq_count++;                
    	         ob_start(); // As seen here - http://stackoverflow.com/a/1288634/921927

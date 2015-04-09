@@ -274,11 +274,11 @@ jQuery(document).ready(function($) {
       $q += "\n";
       $q += "?>";
       $q += "\n";
-      $q += "<div class=\"wp-easy-query "+ classes +"\"  data-total-posts=\"<?php echo $eq_total_posts; ?>\">"
+      $q += "<div class=\"wp-easy-query\"  data-total-posts=\"<?php echo $eq_total_posts; ?>\">"
       $q += "\n";
       $q += "<div class=\"wp-easy-query-posts\">"
       $q += '\n';
-      $q += "<" + container_type + ">"
+      $q += '<' + container_type + ' class="'+ classes +'">';
       $q += "\n";
       $q += "<?php ";
       $q += "\n";
