@@ -20,7 +20,7 @@ Easy Query is the fastest and simplest way to build WordPress queries without ev
 * **Query Builder** - Create your own Easy Query shortcode in seconds by adjusting the various query parameters.
 * **Query Generator** - Generate a custom WP_Query by adjusting parameters in the Query Builder.
 * **Customizable Template** - Easy Query’s customizable template allows you to match the look and feel of your website.
-* **Paging** - Enable Easy Query paging by setting paging=”true” in your shortcode.
+* **Paging** - Easily enable Easy Query paging by setting paging=”true” in your shortcode.
 * **Multiple Instances** - Include multiple instances of Easy Query on a page, post or page template.
 
 Check out the **[official website](https://connekthq.com/easy-query/)** for more information!
@@ -70,6 +70,8 @@ Easy Query accepts a number of parameters that are passed to the WordPress query
 
 = Demos =
 * **[Default](https://connekthq.com/plugins/easy-query/examples/default/)** - Out of the box functionality and styling
+* **[Multiple Instances](https://connekthq.com/plugins/easy-query/examples/multiple-instances/)** - Include multiple Easy Query instances on a single page
+* **[Owl Carousel](https://connekthq.com/plugins/easy-query/examples/owl-carousel/)** - Creating a responsive jQuery carousel with Owl Carousel
 
 
 = Tested Browsers =
@@ -147,10 +149,11 @@ How to install Easy Query.
 
 == Screenshots ==
 
-1. Settings screen
+1. Settings Screen
 2. Templates
 3. Query Builder
 3. Query Generator
+
 
 == Changelog ==
 

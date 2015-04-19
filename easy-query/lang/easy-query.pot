@@ -1,8 +1,8 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: Ajax Load More\n"
-"POT-Creation-Date: 2015-04-03 22:31-0500\n"
-"PO-Revision-Date: 2015-04-03 22:31-0500\n"
+"POT-Creation-Date: 2015-04-18 22:27-0500\n"
+"PO-Revision-Date: 2015-04-18 22:27-0500\n"
 "Last-Translator: Darren Cooney <darren.cooney@gmail.com>\n"
 "Language-Team: \n"
 "Language: en_CA\n"
@@ -320,8 +320,7 @@ msgid "Include"
 msgstr ""
 
 #: ../admin/shortcode-builder/shortcode-builder.php:177
-msgid ""
-"A comma separated list of tags to include by slug. (toronto, canada etc...)"
+msgid "A comma separated list of tags to include by id. (199, 231, 80 etc...)"
 msgstr ""
 
 #: ../admin/shortcode-builder/shortcode-builder.php:199

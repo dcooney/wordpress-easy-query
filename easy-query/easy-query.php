@@ -12,7 +12,7 @@ Copyright: Darren Cooney & Connekt Media
 */	
 	
 define('EWPQ_VERSION', '1.0.0');
-define('EWPQ_RELEASE', 'April 5, 2015');
+define('EWPQ_RELEASE', 'April 18, 2015');
 
 /*
 *  ewpq_install

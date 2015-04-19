@@ -128,7 +128,7 @@ if($cats){ ?>
                }
                echo '</select>';
             }else{
-               echo '<input type="text" class="alm_element" name="category-select" id="category-select" placeholder="design, development, science etc...">';
+               echo '<input type="text" class="alm_element numbers-only" name="category-select" id="category-select" placeholder="8, 15, 22 etc...">';
             }
             ?>
          </div>
@@ -174,7 +174,7 @@ if($tags){ ?>
 	<div class="expand-wrap">
 		<div class="section-title">
 		<h4><?php _e('Include', EWPQ_NAME); ?></h4>
-		<p><?php _e('A comma separated list of tags to include by slug. (toronto, canada etc...)', EWPQ_NAME); ?><br/>&raquo; <a href="admin.php?page=easy-query-examples#example-tag">view example</a></p>
+		<p><?php _e('A comma separated list of tags to include by id. (199, 231, 80 etc...)', EWPQ_NAME); ?><br/>&raquo; <a href="admin.php?page=easy-query-examples#example-tag">view example</a></p>
 		</div>
 		<div class="wrap">
 		   <div class="inner">
@@ -186,7 +186,7 @@ if($tags){ ?>
          	  }
          	  echo '</select>';
       	  }else{
-         	  echo '<input type="text" class="alm_element" name="tag-select" id="tag-select" placeholder="hockey, puck, crosby etc...">';
+         	  echo '<input type="text" class="alm_element numbers-only" name="tag-select" id="tag-select" placeholder="199, 231, 80 etc...">';
       	  }
       	   ?>
          </div>
