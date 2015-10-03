@@ -1,18 +1,18 @@
 === Easy Query ===
 Contributors: dcooney
 Donate link: https://connekthq.com/donate/
-Tags: query, builder, wp_query, easy, simple, save, saving query, generator, paging, paged, query builder, shortcode builder, shortcode, search, tags, category, post types, taxonomy, meta_query, post format, wmpl, archives, date
+Tags: query, query builder, wp_query, save query, query generator, generator, paging, paged, shortcode builder, shortcode, tags, category, post types, taxonomy, meta_query
 Requires at least: 3.7
-Tested up to: 4.1.1
-Stable tag: 1.0.0
+Tested up to: 4.3
+Stable tag: 1.0.3
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Create complex WordPress queries in seconds - it's that easy!
+Easy Query is the fastest and simplest way to build WordPress queries without touching a single line of code.
 
 == Description ==
 
-Easy Query is the fastest and simplest way to build WordPress queries without ever touching a single line of code. Create complex queries using our Custom Query Builder then add the generated shortcode to your pages via the content editor or directly into your template files using our WP_Query Generator.
+Create complex queries using our Custom Query Builder then add the generated shortcode to your pages via the content editor or directly into your template files using our WP_Query Generator.
 
 
 = Features =
@@ -31,7 +31,7 @@ Check out the **[official website](https://connekthq.com/easy-query/)** for more
 
 Easy Query accepts a number of parameters that are passed to the WordPress query via shortcode.
  
-*   **container** - Select the type of container that will wrap your Easy Query templates (<ul>, <ol>, <div>). Default = ‘<ul>’
+*   **container** - Select the type of HTML container that will wrap your Easy Query templates. Default = < ul >
 *   **classes** - Target your content by adding custom classes to the container. Default = null
 *   **template** - Select which template you would like to use. Default = ‘default’
 *   **post_type** - Comma separated list of post types. Default = ‘post’
@@ -157,6 +157,14 @@ How to install Easy Query.
 
 == Changelog ==
 
+= 1.0.3 =
+* Security Update - We have added an extra layer of security verification around the saving of custom templates. 
+
+= 1.0.2 =
+* Fix for date query parameters. 
+
+= 1.0.1 =
+* Updating multisite activation function. Easy Query install is now triggered when a new site is created. 
 
 = 1.0.0 =
 * Initial Easy Query Commit

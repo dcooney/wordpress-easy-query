@@ -1651,6 +1651,9 @@ table.highlight{
       float: right;
       opacity: 0;
       transition: all 0.2s ease;
+      position: absolute;
+      right: 15px;
+      bottom: 15px;
    }  
       .repeaters .ewpq-delete a{
          border-radius: 2px;

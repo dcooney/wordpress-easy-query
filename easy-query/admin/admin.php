@@ -1,20 +1,11 @@
 <?php
 
 /* Admin functions */
-
 add_action( 'admin_head', 'ewpq_admin_vars' ); // Set admin JS variables
-
 add_action( 'wp_ajax_ewpq_save_repeater', 'ewpq_save_repeater' ); // Ajax Save template
-add_action( 'wp_ajax_nopriv_ewpq_save_repeater', 'ewpq_save_repeater' ); // Ajax Save template
-
 add_action( 'wp_ajax_ewpq_update_repeater', 'ewpq_update_repeater' ); // Ajax Update template
-add_action( 'wp_ajax_nopriv_ewpq_update_repeater', 'ewpq_update_repeater' ); // Ajax Update template
-
 add_action( 'wp_ajax_ewpq_get_tax_terms', 'ewpq_get_tax_terms' ); // Ajax Get Taxonomy Terms
-add_action( 'wp_ajax_nopriv_ewpq_get_tax_terms', 'ewpq_get_tax_terms' ); // Ajax Get Taxonomy Terms
-
 add_action( 'wp_ajax_ewpq_query_generator', 'ewpq_query_generator' ); // Ajax Generate Query
-add_action( 'wp_ajax_nopriv_ewpq_query_generator', 'ewpq_query_generator' ); // Ajax Generate Query
 
 
 
@@ -334,25 +325,33 @@ function ewpq_get_template_list(){
 */
 
 function ewpq_query_generator(){ 
-   error_reporting(E_ALL|E_STRICT);   
-	$nonce = $_POST["nonce"];
    
-	// Check our nonce, if they don't match then bounce!
-	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
-		die('Error - unable to verify nonce, please try again.');
-		
-   $template = Trim(stripslashes($_POST["template"])); // template   
-   $f = EWPQ_TEMPLATE_PATH. ''. $template .'.php'; // file()   
-   
-	$open_error = '<span class="saved-error"><b>'. __('Error Opening Template', EWPQ_NAME) .'</b></span>';
-   $open_error .= '<em>'. $f .'</em>';
-   $open_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the plugin directory', EWPQ_NAME);
-    
-	$data = file_get_contents($f) or die($open_error); // Open file
+	if (current_user_can( 'edit_theme_options' )){
+   	
+      error_reporting(E_ALL|E_STRICT);   
+   	$nonce = $_POST["nonce"];
+      
+   	// Check our nonce, if they don't match then bounce!
+   	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
+   		die('Error - unable to verify nonce, please try again.');
+   		
+      $template = Trim(stripslashes($_POST["template"])); // template   
+      $f = EWPQ_TEMPLATE_PATH. ''. $template .'.php'; // file()   
+      
+   	$open_error = '<span class="saved-error"><b>'. __('Error Opening Template', EWPQ_NAME) .'</b></span>';
+      $open_error .= '<em>'. $f .'</em>';
+      $open_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the plugin directory', EWPQ_NAME);
+       
+   	$data = file_get_contents($f) or die($open_error); // Open file
+   	
+   	echo $data;   
+   	
+   	die();
+   	
+	}else {
+		echo __('You don\'t belong here.', EWPQ_NAME);
+	}
 	
-	echo $data;   
-	
-	die();
 }
 
 
@@ -366,58 +365,65 @@ function ewpq_query_generator(){
 */
 
 function ewpq_save_repeater(){
-	$nonce = $_POST["nonce"];
-	// Check our nonce, if they don't match then bounce!
-	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
-		die('Error - unable to verify nonce, please try again.');
-		
-   // Get _POST Vars 
-	$c = Trim(stripslashes($_POST["value"])); // Template Value
-	$n = Trim(stripslashes($_POST["template"])); // Template name
-	$t = Trim(stripslashes($_POST["type"])); // Template type
-	$a = Trim(stripslashes($_POST["alias"])); // Template alias
-	
-   $f = EWPQ_TEMPLATE_PATH. ''.$n .'.php'; // File
-		
-   $o_error = '<span class="saved-error"><b>'. __('Error Opening File', EWPQ_NAME) .'</b></span>';
-   $o_error .= '<em>'. $f .'</em>';
-   $o_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
    
-   $w_error = '<span class="saved-error"><b>'. __('Error Saving File', EWPQ_NAME) .'</b></span>';
-   $w_error .= '<em>'. $f .'</em>';
-   $w_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
-   
-   // Open file
-	$o = fopen($f, 'w+') or die($o_error); 
+   if (current_user_can( 'edit_theme_options' )){
+      
+   	$nonce = $_POST["nonce"];
+   	// Check our nonce, if they don't match then bounce!
+   	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
+   		die('Error - unable to verify nonce, please try again.');
+   		
+      // Get _POST Vars 
+   	$c = Trim(stripslashes($_POST["value"])); // Template Value
+   	$n = Trim(stripslashes($_POST["template"])); // Template name
+   	$t = Trim(stripslashes($_POST["type"])); // Template type
+   	$a = Trim(stripslashes($_POST["alias"])); // Template alias
+   	
+      $f = EWPQ_TEMPLATE_PATH. ''.$n .'.php'; // File
+   		
+      $o_error = '<span class="saved-error"><b>'. __('Error Opening File', EWPQ_NAME) .'</b></span>';
+      $o_error .= '<em>'. $f .'</em>';
+      $o_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
+      
+      $w_error = '<span class="saved-error"><b>'. __('Error Saving File', EWPQ_NAME) .'</b></span>';
+      $w_error .= '<em>'. $f .'</em>';
+      $w_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
+      
+      // Open file
+   	$o = fopen($f, 'w+') or die($o_error); 
+   	
+   	// Save/Write the file
+   	$w = fwrite($o, $c) or die($w_error);
+   	
+   	// $r = fread($o, 100000); //Read it
+   	fclose($o); //now close it
+   	
+   	//Save to database
+   	global $wpdb;
+   	$table_name = $wpdb->prefix . "easy_query";	
+   	
+      if($t === 'unlimited'){ // Unlimited Templates	  
+   	   $data_update = array('template' => "$c", 'alias' => "$a", 'pluginVersion' => EWPQ_VERSION);
+   	   $data_where = array('name' => $n);
+      }
+      else{ // Custom Repeaters
+   	   $data_update = array('template' => "$c", 'pluginVersion' => EWPQ_VERSION);
+   	   $data_where = array('name' => "default");
+      }
+      
+   	$wpdb->update($table_name , $data_update, $data_where);
+   	
+   	//Our results
+   	if($w){
+   	    echo '<span class="saved">Template Saved Successfully</span>';
+   	} else {
+   	    echo '<span class="saved-error"><b>'. __('Error Writing File', EWPQ_NAME) .'</b></span><br/>Something went wrong and the data could not be saved.';
+   	}
+   	die();
 	
-	// Save/Write the file
-	$w = fwrite($o, $c) or die($w_error);
-	
-	// $r = fread($o, 100000); //Read it
-	fclose($o); //now close it
-	
-	//Save to database
-	global $wpdb;
-	$table_name = $wpdb->prefix . "easy_query";	
-	
-   if($t === 'unlimited'){ // Unlimited Templates	  
-	   $data_update = array('template' => "$c", 'alias' => "$a", 'pluginVersion' => EWPQ_VERSION);
-	   $data_where = array('name' => $n);
-   }
-   else{ // Custom Repeaters
-	   $data_update = array('template' => "$c", 'pluginVersion' => EWPQ_VERSION);
-	   $data_where = array('name' => "default");
-   }
-   
-	$wpdb->update($table_name , $data_update, $data_where);
-	
-	//Our results
-	if($w){
-	    echo '<span class="saved">Template Saved Successfully</span>';
-	} else {
-	    echo '<span class="saved-error"><b>'. __('Error Writing File', EWPQ_NAME) .'</b></span><br/>Something went wrong and the data could not be saved.';
+	}else {
+		echo __('You don\'t belong here.', EWPQ_NAME);
 	}
-	die();
 }
 
 
@@ -430,27 +436,35 @@ function ewpq_save_repeater(){
 *  @since 1.0.0
 */
 
-function ewpq_update_repeater(){
-	$nonce = $_POST["nonce"];
-	// Check our nonce, if they don't match then bounce!
-	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
-		die('Error - unable to verify nonce, please try again.');
-		
-   // Get _POST Vars  	
-	$n = Trim(stripslashes($_POST["template"])); // Repeater name
-	$t = Trim(stripslashes($_POST["type"])); // Repeater type (default | unlimited)
+function ewpq_update_repeater(){   
+   
+   if (current_user_can( 'edit_theme_options' )){
+
+   	$nonce = $_POST["nonce"];
+   	// Check our nonce, if they don't match then bounce!
+   	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
+   		die('Error - unable to verify nonce, please try again.');
+   		
+      // Get _POST Vars  	
+   	$n = Trim(stripslashes($_POST["template"])); // Repeater name
+   	$t = Trim(stripslashes($_POST["type"])); // Repeater type (default | unlimited)
+   	
+   	// Get value from database
+   	global $wpdb;
+   	$table_name = $wpdb->prefix . "easy_query";	
+   		
+   	if($t === 'default')	$n = 'default';      
+      
+      $the_template = $wpdb->get_var("SELECT template FROM " . $table_name . " WHERE name = '$n'");
+      
+      echo $the_template; // Return repeater value
+      
+   	die();
+	   	
+	}else {
+		echo __('You don\'t belong here.', EWPQ_NAME);
+	}
 	
-	// Get value from database
-	global $wpdb;
-	$table_name = $wpdb->prefix . "easy_query";	
-		
-	if($t === 'default')	$n = 'default';      
-   
-   $the_template = $wpdb->get_var("SELECT template FROM " . $table_name . " WHERE name = '$n'");
-   
-   echo $the_template; // Return repeater value
-   
-	die();
 }
 
 
@@ -464,6 +478,9 @@ function ewpq_update_repeater(){
  */
 
 function ewpq_get_tax_terms(){	
+   
+   if (current_user_can( 'edit_theme_options' )){
+      
 	$nonce = $_GET["nonce"];
 	// Check our nonce, if they don't match then bounce!
 	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
@@ -489,6 +506,10 @@ function ewpq_get_tax_terms(){
 	}else{
 		echo "<p class='warning'>No terms exist within this taxonomy</p>";
 		die();
+	}
+	   	
+	}else {
+		echo __('You don\'t belong here.', EWPQ_NAME);
 	}
 }
 

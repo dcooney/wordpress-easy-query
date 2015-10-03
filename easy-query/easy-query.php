@@ -6,13 +6,13 @@ Description: Create complex WordPress queries in seconds - it's that easy!
 Author: Darren Cooney
 Twitter: @KaptonKaos
 Author URI: http://connekthq.com
-Version: 1.0.0
+Version: 1.0.3
 License: GPL
 Copyright: Darren Cooney & Connekt Media
 */	
 	
-define('EWPQ_VERSION', '1.0.0');
-define('EWPQ_RELEASE', 'April 18, 2015');
+define('EWPQ_VERSION', '1.0.3');
+define('EWPQ_RELEASE', 'October 3, 2015');
 
 /*
 *  ewpq_install
@@ -22,6 +22,8 @@ define('EWPQ_RELEASE', 'April 18, 2015');
 */
 
 register_activation_hook( __FILE__, 'ewpq_install' );
+add_action( 'wpmu_new_blog', 'ewpq_install' );
+
 function ewpq_install() {
    
    if(is_plugin_active('easy-query-pro/easy-query-pro.php'))
@@ -211,6 +213,11 @@ if( !class_exists('EasyQuery') ):
    		
    		// Search
    		$s = $a['search'];
+   		
+   		// Date
+   		$year = $a['year'];
+   		$month = $a['month'];
+   		$day = $a['day'];
    		
    		// Author ID
    		$author_id = $a['author'];		
