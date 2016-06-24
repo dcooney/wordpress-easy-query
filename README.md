@@ -1,13 +1,13 @@
-# Easy Query
+# Easy Query (Lite Version)
 Easy Query is the fastest and simplest way to build WordPress queries without writing a single line of code. 
 
 The Easy Query WordPress plugin is the fastest and simplest way to build complex WordPress queries without touching a single line of code.
 Simply adjust the Query Builder parameters to create a custom easy_query shortcode and custom WP_Query for use on your pages and templates.
 
-Get more information and view live examples at https://connekthq.com/plugins/easy-query/
+Get more information and details on upgrading to Easy Query Pro at https://connekthq.com/plugins/easy-query/
 
 ##WordPress.org
-Easy Query is available as an installed plugin on [wordpress.org](https://wordpress.org/plugins/easy-query/). 
+Easy Query (Lite Version) is available as an installed plugin on [wordpress.org](https://wordpress.org/plugins/easy-query/). 
 Please download the latest stable version from your WordPress plugins dashboard by searching for Easy Query or visiting https://wordpress.org/plugins/easy-query/.
 
 ##Easy Query Pro
