@@ -1,7 +1,7 @@
 <div class="admin cnkt settings" id="ewpq-settings">
 	<div class="wrap">
 		<div class="header-wrap">
-         <h2><?php echo EWPQ_TITLE; ?></h2>
+         <h1><?php echo EWPQ_TITLE; ?></h1>
          <p><?php echo EWPQ_TAGLINE; ?></p>
       </div>         
 		<?php if( isset($_GET['settings-updated']) ) { ?>

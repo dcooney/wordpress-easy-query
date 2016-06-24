@@ -1,6 +1,20 @@
 @import url(https://fonts.googleapis.com/css?family=Open+Sans:400,700,600);
 
-
+.eq-callout{
+	background-color: #fffde1;
+	border: 1px solid #e4e2cf;
+	padding: 15px;
+	display: block;
+	margin: 0 0 20px;
+	color: #444;
+	line-height: 1.55;
+}
+.eq-callout span{
+	display: block;
+	font-size: 18px;	
+	line-height: 1.2;
+	padding: 0 0 10px;
+}
 /* Saved Query Listing */
 ul.query-list{
    margin: 0 !important;
@@ -116,10 +130,12 @@ ul.query-list{
 
 /* Save Query */
 
-.cnkt .save-query-wrap{
+.cnkt .save-query-wrap,
+.query-builder-preview{
    position: relative;
 }
-.cnkt .save-query-wrap .cover{
+.cnkt .save-query-wrap .cover,
+.query-builder-preview .cover{
    position: absolute;
    left: 0;
    top: 0;
@@ -130,7 +146,8 @@ ul.query-list{
    padding: 0 14px;
    text-align: center;
 }
-   .cnkt .save-query-wrap .cover span{
+   .cnkt .save-query-wrap .cover span,
+   .query-builder-preview .cover span{
       font-size: 13px;
       font-weight: 600;
       text-shadow: 1px 1px 0 rgba(255, 255, 255, 0.5);
@@ -291,7 +308,7 @@ ul.query-list{
 	margin:0 0 15px;
 }
    .cnkt p.lg{
-      font-size: 20px;
+      font-size: 22px;
       font-weight: 300;
    }
 
@@ -632,6 +649,10 @@ ul.query-list{
    font-style: italic;
 }
 
+.cnkt input[type=number]{
+	line-height: 1;
+	height: auto;
+}
 .cnkt input[type=text],
 .cnkt input[type=number],
 .cnkt textarea{
@@ -1077,11 +1098,13 @@ ul.query-list{
 	padding-top: 11px;
 	max-width: 75%;
 }
+	.cnkt .header-wrap h1,
 	.cnkt .header-wrap h2{
 		padding-top: 0;
-		font-size: 26px;
+		font-size: 24px;
 	}
-	.cnkt .header-wrap h2 + p{
+	.cnkt .header-wrap h2 + p,
+	.cnkt .header-wrap h1 + p{
 		margin-top: -3px;
 		opacity: 0.8;
 	}
@@ -1286,24 +1309,30 @@ table.highlight{
 #ewpq-add-ons .group{
    overflow: hidden;
 }
-#ewpq-add-ons .row .wrap{
-   padding-bottom: 60px;
-   width: 55%;
+.go-eq-pro ol li h3{
+	font-size: 14px;
+	font-weight: 700;
 }
-#ewpq-add-ons .section-title{
-   width: 45%;
-   padding: 0;
+.go-eq-pro ol li p{
+	font-size: 13px;
 }
+
 #ewpq-add-ons .group .section-title p{
    padding-left: 0 !important;
 }
 #ewpq-add-ons .group a.btn{
-   position: absolute;
-   bottom: 20px;
-   right: 20px;
+	float: left;
    font-size: 14px;
-   padding: 8px 14px;
+   padding: 12px 24px 12px 20px;
    display: block;
+   margin: 10px 0 15px;
+}
+
+.pro-updates{
+	display: block;
+	padding: 40px 0 0;
+	border-top: 1px solid #efefef;
+	overflow: hidden;
 }
 
 /* Add-on Callout! */
@@ -2104,7 +2133,7 @@ table.highlight{
    .cnkt .section-title,
    .cnkt .row .wrap{
       clear: both;
-      width: 100%;
+      width: 100% !important;
       display: block;
       float: none;
       padding: 10px;

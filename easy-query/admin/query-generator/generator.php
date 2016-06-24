@@ -1,7 +1,11 @@
 <div class="cnkt-main">
-   <div class="group">
-      <p><?php _e('Copy and paste the following WP_Query into a <a href="http://codex.wordpress.org/Theme_Development#Template_Files" target="_blank">PHP template</a> within your WordPress theme.', EWPQ_NAME); ?></p>
-      <textarea id="query-output"></textarea>
+   <div class="group query-builder-preview">
+      <img src="<?php echo EWPQ_ADMIN_URL; ?>img/generator-preview.jpg">
+      <div class="cover">
+         <span>
+         View your generated WP_Query() with <a target="_parent" href="https://connekthq.com/plugins/easy-query/pro/">Easy Query Pro</a>
+         </span>
+      </div>
    </div>
 </div>
 <div class="cnkt-sidebar">

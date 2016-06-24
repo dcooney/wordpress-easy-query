@@ -1,7 +1,7 @@
 <div class="admin cnkt shortcode-builder" id="ewpq-builder">	
 	<div class="wrap">
 		<div class="header-wrap">
-			<h2><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Custom Query Builder', EWPQ_NAME); ?></strong></h2>
+			<h1><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Custom Query Builder', EWPQ_NAME); ?></strong></h1>
 			<p><?php _e('Create your own <a href="http://en.support.wordpress.com/shortcodes/" target="_blank">Shortcode</a> and <a href="http://codex.wordpress.org/Class_Reference/WP_Query" target="_blank">WP_Query</a> by adjusting the parameters below.', EWPQ_NAME); ?></p>  
 		</div>
 		

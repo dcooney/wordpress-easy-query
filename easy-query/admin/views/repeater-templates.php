@@ -1,7 +1,7 @@
 <div class="admin cnkt" id="ewpq-repeaters">	
 	<div class="wrap">
 		<div class="header-wrap">
-			<h2><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Repeater Templates', EWPQ_NAME); ?></strong></h2>
+			<h1><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Repeater Templates', EWPQ_NAME); ?></strong></h1>
 			<p><?php _e('The collection of available templates for use throughout your theme', EWPQ_NAME); ?>.</p>  
 		</div>
 		<div class="cnkt-main repeaters">		

@@ -1,7 +1,7 @@
 <div class="admin cnkt" id="ewpq-add-ons">	
 	<div class="wrap">
 		<div class="header-wrap">
-	   		<h2><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Pro', EWPQ_NAME); ?></strong></h2>
+	   		<h1><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Pro', EWPQ_NAME); ?></strong></h1>
 	   		<p><?php _e('Upgrade to <strong>Easy Query Pro</strong> today to unlock added features and functionality.', EWPQ_NAME); ?></p>  
 		</div>
 		<div class="cnkt-main">
@@ -14,7 +14,7 @@
                      <p><small><?php _e('Easy Query Pro unlimited templates.', EWPQ_NAME); ?></small></p>                      
                   </div>
                   <div class="wrap">                     
-                     <p>A few of the added features available when you upgrade to <strong>Easy Query Pro</strong>.</p>
+                     <p>Upgrade to <strong>Easy Query Pro</strong> and get these added features and more.</p>
                      <ol>
                         <li>
                            <span>1</span>
@@ -29,16 +29,26 @@
                         </li>
                         <li>
                            <span>3</span>
+                           <h3><?php _e('Additional Query Arguments', EWPQ_NAME); ?></h3>
+                           <p><?php _e('Unlock additional query parameters such a taxonomy and custom fields.
+', EWPQ_NAME); ?></p> 
+                        </li>
+                        <li>
+                           <span>4</span>
                            <h3><?php _e('Multisite Compatibility', EWPQ_NAME); ?></h3>
                            <p><?php _e('Install and manage Easy Query templates and queries across multiple sites in your network.', EWPQ_NAME); ?></p> 
                         </li>
-                     </ol>                    
+                        <li>
+                           <span>5</span>
+                           <h3><?php _e('Support', EWPQ_NAME); ?></h3>
+                           <p><?php _e('Get unlimited support and technical assistance for 1 year.', EWPQ_NAME); ?></p> 
+                        </li>
+                     </ol>    
+                     <p><a class="btn" href="https://connekthq.com/plugins/easy-query/pro/" target="_blank"><i class="fa fa-download"></i> Upgrade to Easy Query Pro!</a></p>                  
                   </div>           
                </div>
-			   </div>	
-			   <a class="btn" href="https://connekthq.com/plugins/easy-query/pro/" target="_blank"><i class="fa fa-download"></i> Upgrade to Easy Query Pro!</a>		   
+			   </div>		   
 		   </div>
-		   <!-- End Custom Repeaters --> 
 		   
 	   </div>	   
 	   

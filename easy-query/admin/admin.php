@@ -145,8 +145,8 @@ function ewpq_admin_menu() {
    
    $ewpq_go_pro_page = add_submenu_page( // Go Pro
       'easy-query', 
-      'Pro', 
-      '<span style="color: #e1e0f5;font-weight: 700;">Pro<span>', 
+      'Upgrade to Pro', 
+      '<span style="font-weight: 700;">&raquo; Upgrade to Pro<span>', 
       'edit_theme_options', 
       'easy-query-go-pro', 
       'ewpq_go_pro_page'
@@ -219,7 +219,6 @@ function ewpq_enqueue_admin_scripts(){
    wp_enqueue_script( 'ewpq-drops', EWPQ_ADMIN_URL. 'js/libs/jquery.drops.js', array( 'jquery' ));
    wp_enqueue_script( 'ewpq-admin', EWPQ_ADMIN_URL. 'js/admin.js', array( 'jquery' ));
    wp_enqueue_script( 'ewpq-shortcode-builder', EWPQ_ADMIN_URL. 'shortcode-builder/js/shortcode-builder.js', array( 'jquery' ));
-   wp_enqueue_script( 'ewpq-query-genertor', EWPQ_ADMIN_URL. 'query-generator/js/query-generator.js', array( 'jquery' ), false);
 }
 
 

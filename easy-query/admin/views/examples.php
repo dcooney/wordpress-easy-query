@@ -1,7 +1,7 @@
 <div class="admin cnkt" id="ewpq-examples">	
 	<div class="wrap">
 		<div class="header-wrap">
-   			<h2><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Examples', EWPQ_NAME); ?></strong></h2>
+   			<h1><?php echo EWPQ_TITLE; ?>: <strong><?php _e('Examples', EWPQ_NAME); ?></strong></h1>
    			<p><?php _e('A collection of shortcode examples to get you up and running quickly', EWPQ_NAME); ?>.</p>  
 		</div>
 		<div class="cnkt-main full">

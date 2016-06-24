@@ -1,18 +1,19 @@
 <?php
 /*
 Plugin Name: Easy Query
-Plugin URI: http://connekthq.com/plugins/easy-query/
-Description: Create complex WordPress queries in seconds - it's that easy!
+Plugin URI: https://connekthq.com/plugins/easy-query/
+Description: A query builder plugin for WordPress
 Author: Darren Cooney
 Twitter: @KaptonKaos
-Author URI: http://connekthq.com
-Version: 1.0.3
+Author URI: https://connekthq.com
+Version: 1.1
 License: GPL
 Copyright: Darren Cooney & Connekt Media
+
 */	
 	
-define('EWPQ_VERSION', '1.0.3');
-define('EWPQ_RELEASE', 'October 3, 2015');
+define('EWPQ_VERSION', '1.1');
+define('EWPQ_RELEASE', 'June 24, 2016');
 
 /*
 *  ewpq_install
@@ -21,10 +22,10 @@ define('EWPQ_RELEASE', 'October 3, 2015');
 *  @since 1.0.0
 */
 
-register_activation_hook( __FILE__, 'ewpq_install' );
-add_action( 'wpmu_new_blog', 'ewpq_install' );
+register_activation_hook( __FILE__, 'ewpq_install_lite' );
+add_action( 'wpmu_new_blog', 'ewpq_install_lite' );
 
-function ewpq_install() {
+function ewpq_install_lite() {
    
    if(is_plugin_active('easy-query-pro/easy-query-pro.php'))
       die('You must de-activate Easy Query Pro before activating Easy Query.');  	
@@ -71,25 +72,16 @@ if( !class_exists('EasyQuery') ):
    		define('EWPQ_URL', plugins_url('', __FILE__));
    		define('EWPQ_ADMIN_URL', plugins_url('admin/', __FILE__));
    		define('EWPQ_NAME', 'easy_query');
-   		define('EWPQ_TITLE', 'Easy Query');	
+   		define('EWPQ_TITLE', 'Easy Query (Lite Version)');	
    		define('EWPQ_TAGLINE', 'Create complex WordPress queries in seconds - it\'s that easy!');		
    		
    		add_action( 'wp_enqueue_scripts', array(&$this, 'ewpq_enqueue_scripts') );			
-   		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array(&$this, 'ewpq_action_links') );
-   
-   		add_shortcode( 'easy_query', array(&$this, 'ewpq_shortcode') );		
-   		
-   		// Allow shortcodes in widget areas
-   		add_filter( 'widget_text', 'do_shortcode' );
-   		
-   		// load text domain
-   		load_plugin_textdomain( 'easy-wp-query', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' );
-   		
-   		// Include Easy Query core functions
-   		include_once( EWPQ_PATH . 'core/functions.php');
-   		
-   		// includes WP admin core
-   		$this->ewpq_before_theme();	
+   		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array(&$this, 'ewpq_action_links') );   
+   		add_shortcode( 'easy_query', array(&$this, 'ewpq_shortcode') );	     		
+   		add_filter( 'widget_text', 'do_shortcode' ); // Allow shortcodes in widget areas  		
+   		load_plugin_textdomain( 'easy-wp-query', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' ); // load text domain
+   		include_once( EWPQ_PATH . 'core/functions.php') ;// Include Easy Query core functions  		
+   		$this->ewpq_before_theme(); // includes WP admin core	
    		
    	}	
    		

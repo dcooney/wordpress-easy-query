@@ -218,52 +218,13 @@ if($tags){ ?>
 </div>
 <?php } ?>
  
-<?php
-// Taxonomies
-$tax_args = array(
-	'public'   => true,
-	'_builtin' => false	
-); 
-$tax_output = 'objects'; // or objects
-$taxonomies = get_taxonomies( $tax_args, $tax_output ); 
-if ( $taxonomies ) {
-	echo '<div class="row taxonomy" id="alm-taxonomy">';   		
-	echo '<h3 class="heading">'.__('Taxonomy', EWPQ_NAME). '</h3>';
-	echo '<div class="expand-wrap">';
-	echo '<div class="section-title">';
-	echo '<p>'.__('Select your custom taxonomy then select the terms and operator.', EWPQ_NAME). '</p>';
-	echo '</div>';
-	
-	echo '<div class="wrap">';
-	
-	echo '<div class="inner">';
-	echo '<select class="alm_element" name="taxonomy-select" id="taxonomy-select">';
-	echo '<option value="" selected="selected">-- ' . __('Select Taxonomy', EWPQ_NAME) . ' --</option>';
-    foreach( $taxonomies as $taxonomy ){
-      echo '<option name="chk-'.$taxonomy->query_var.'" id="chk-'.$taxonomy->query_var.'" value="'.$taxonomy->query_var.'">'.$taxonomy->label.'</option>';
-    }
-    echo '</select>';
-    echo '</div>';
-    
-    echo '<div id="taxonomy-extended">';
-    echo '<div class="inner border-top" id="tax-terms">';
-    echo '<label class="full">'. __('Taxonomy Terms:', EWPQ_NAME) .'</label>';
-    echo '<div id="tax-terms-container" class="checkboxes"></div>';
-    echo '</div>';
-    
-    echo '<div class="inner border-top" id="tax-operator-select">';
-    echo '<label class="full">'. __('Taxonomy Operator:', EWPQ_NAME) .'</label>';
-    echo '<ul class="radio">';
-    echo '<li><input class="alm_element" name="tax-operator" id="tax-in-radio" value="IN" type="radio" checked="checked"><label for="tax-in-radio">IN (default)</li>';
-    echo '<li><input class="alm_element" name="tax-operator" id="tax-not-in-radio" value="NOT IN" type="radio"><label for="tax-not-in-radio">NOT IN</li>';
-    echo '</ul>';
-    echo '</div>';	    
-    echo '</div>';
-    
-    echo '</div>';
-    echo '</div>';
-    echo '</div>';
-}?>
+
+<div class="row taxonomy" id="alm-taxonomy">
+	<h3 class="heading"><?php _e('Taxonomy', EWPQ_NAME); ?></h3>
+	<div class="expand-wrap">
+		<div class="call-out"><i class="fa fa-unlock"></i> Unlock taxonomy queries with <a target="_parent" href="https://connekthq.com/plugins/easy-query/pro/">Easy Query Pro</a></div>
+	</div>	
+</div>
 
 
 <!-- Date -->
@@ -294,48 +255,11 @@ if ( $taxonomies ) {
 </div>
      
 
-<?php // Custom Fields ?>
-<div class="row input meta-key" id="alm-meta-key">
-   <h3 class="heading"><?php _e('Custom Fields (Meta)', EWPQ_NAME); ?></h3>
-   <div class="expand-wrap">
-      <div class="section-title">
-         <p><?php _e('Query by <a href="http://codex.wordpress.org/Class_Reference/WP_Meta_Query" target="_blank">custom fields</a>.  Enter your key(name) and value, then select your operator.', EWPQ_NAME); ?></p>
-      </div>
-      <div class="wrap">
-         <div class="inner">
-            <?php // Meta Key ?>
-            <label for="meta-key" class="full"><?php _e('Key (Name):', EWPQ_NAME); ?></label>
-            <input class="alm_element" name="meta-key" type="text" id="meta-key" value="" placeholder="<?php _e('Enter custom field key(name)', EWPQ_NAME); ?>">   
-         </div> 
-         <div id="meta-query-extended">
-            <?php // Meta Value ?>
-            <div class="inner border-top">
-               <label for="meta-value" class="full"><?php _e('Value:', EWPQ_NAME); ?></label>
-               <input class="alm_element" name="meta-value" type="text" id="meta-value" value="" placeholder="<?php _e('Enter custom field value', EWPQ_NAME); ?>">
-            </div>    
-            <?php // Meta Compare ?>           
-            <div class="inner border-top">
-               <label for="meta-compare" class="full"><?php _e('Operator:', EWPQ_NAME); ?></label>
-               <select class="alm_element" id="meta-compare" name="meta-compare">
-                  <option value="IN" selected="selected">IN</option>
-                  <option value="NOT IN">NOT IN</option>
-                  <option value="BETWEEN">BETWEEN</option>
-                  <option value="NOT BETWEEN">NOT BETWEEN</option>
-                  <option value="=">= &nbsp;&nbsp; (equals)</option>
-                  <option value="!=">!= &nbsp; (does NOT equal)</option>
-                  <option value=">">> &nbsp;&nbsp; (greater than)</option>
-                  <option value=">=">>= &nbsp;(greater than or equal to)</option>
-                  <option value="<">&lt; &nbsp;&nbsp; (less than)</option>
-                  <option value="<=">&lt;= &nbsp;(less than or equal to)</option>
-                  <option value="LIKE">LIKE</option>
-                  <option value="NOT LIKE">NOT LIKE</option>
-                  <option value="EXISTS">EXISTS</option>
-                  <option value="NOT EXISTS">NOT EXISTS</option>
-               </select>
-            </div>            
-         </div>
-      </div>         
-   </div>
+<div class="row taxonomy" id="alm-taxonomy">
+	<h3 class="heading"><?php _e('Custom Fields (Meta Query', EWPQ_NAME); ?></h3>
+	<div class="expand-wrap">
+		<div class="call-out"><i class="fa fa-unlock"></i> Unlock custom field queries with <a target="_parent" href="https://connekthq.com/plugins/easy-query/pro/">Easy Query Pro</a></div>
+	</div>	
 </div>
 
 

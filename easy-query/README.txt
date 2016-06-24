@@ -1,16 +1,19 @@
-=== Easy Query ===
+=== Easy Query - A Query Builder Plugin===
 Contributors: dcooney
 Donate link: https://connekthq.com/donate/
 Tags: query, query builder, wp_query, save query, query generator, generator, paging, paged, shortcode builder, shortcode, tags, category, post types, taxonomy, meta_query
 Requires at least: 3.7
-Tested up to: 4.3
-Stable tag: 1.0.3
+Tested up to: 4.5.3
+Stable tag: 1.1
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
-Easy Query is the fastest and simplest way to build WordPress queries without touching a single line of code.
+Easy Query is the fastest and simplest way to build WordPress queries without writing a single line of code.
 
 == Description ==
+
+As of October 21st, 2015 the free version **Easy Query** will no longer be supported.
+The plugin will continue to function as usual, however anyone wishing to receive updates and new features is encouraged to upgrade to [Easy Query Pro](https://connekthq.com/plugins/easy-query/).
 
 Create complex queries using our Custom Query Builder then add the generated shortcode to your pages via the content editor or directly into your template files using our WP_Query Generator.
 
@@ -39,16 +42,9 @@ Easy Query accepts a number of parameters that are passed to the WordPress query
 *   **category__not_in** - A comma separated list of categories to exclude by ID. Default = null
 *   **tag__in** - A comma separated list of tags to include by ID. Default = null
 *   **tag__not_in** - A comma separated list of tags to exclude by ID. Default = null
-*   **taxonomy** - Query by custom taxonomy name. Default = null
-*   **taxonomy_terms** - Comma separated list of custom taxonomy terms(slug). Default = null
-*   **taxonomy_operator** - Operator to compare Taxonomy Terms against (IN/NOT IN). Default = ‘IN’
 *   **day** - Day of the week. Default = null
 *   **month** - Month of the year. Default = null
 *   **year** - Year of post. Default = null
-*   **taxonomy_operator** - Operator to compare Taxonomy Terms against (IN/NOT IN). Default = ‘IN’
-*   **meta_key** - Custom field key(name). Default = null
-*   **meta_value** - Custom field value. Default = null
-*   **meta_compare** - Operator to compare meta_key and meta_value against (IN/NOT IN/=/!=/>/>=/</<= etc.). Default = ‘IN’
 *   **author** - Query by author id. Default = null
 *   **search** - Query search term (‘s’). Default = null
 *   **post__in** - Comma separated list of post ID’s to include in query. Default = null 
@@ -156,6 +152,9 @@ How to install Easy Query.
 
 
 == Changelog ==
+
+= 1.1 =
+* NEWS - As of October 21st, 2015 the free version Easy Query will no longer be supported. 
 
 = 1.0.3 =
 * Security Update - We have added an extra layer of security verification around the saving of custom templates. 
