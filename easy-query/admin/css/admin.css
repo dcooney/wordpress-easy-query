@@ -70,6 +70,7 @@
       border-right: 1px solid #eee;
       list-style: none;
       background: none;
+      font-size: 14px;
    }
    .eq-nav li:first-of-type{
    }

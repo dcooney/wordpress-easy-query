@@ -1,6 +1,6 @@
 <?php
 /*
-Plugin Name: Easy Query Lite
+Plugin Name: Easy Query
 Plugin URI: https://connekthq.com/plugins/easy-query/
 Description: A query builder plugin for WordPress.
 Author: Darren Cooney
