@@ -1,11 +1,13 @@
 <?php
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
 
-/* Admin functions */
+/* WP Actions */
 add_action( 'admin_head', 'ewpq_admin_vars' ); // Set admin JS variables
+add_action( 'admin_menu', 'eq_admin_menu' ); // Create admin menu
 add_action( 'wp_ajax_ewpq_save_repeater', 'ewpq_save_repeater' ); // Ajax Save template
 add_action( 'wp_ajax_ewpq_update_repeater', 'ewpq_update_repeater' ); // Ajax Update template
-add_action( 'wp_ajax_ewpq_get_tax_terms', 'ewpq_get_tax_terms' ); // Ajax Get Taxonomy Terms
-add_action( 'wp_ajax_ewpq_query_generator', 'ewpq_query_generator' ); // Ajax Generate Query
+add_filter( 'admin_footer_text', 'eq_filter_admin_footer_text'); // Admin menu text
+
 
 
 
@@ -20,7 +22,9 @@ function ewpq_admin_vars() { ?>
 	 /* <![CDATA[ */
     var ewpq_admin_localize = <?php echo json_encode( array( 
         'ajax_admin_url' => admin_url( 'admin-ajax.php' ),
-        'ewpq_admin_nonce' => wp_create_nonce( 'ewpq_repeater_nonce' )
+        'ewpq_admin_nonce' => wp_create_nonce( 'ewpq_repeater_nonce' ),
+        'active' => __('Active', EQ_VERSION),
+        'inactive' => __('Inactive', EQ_VERSION),
     )); ?>
     /* ]]> */
     </script>
@@ -30,136 +34,205 @@ function ewpq_admin_vars() { ?>
 
 /**
 * ewpq_core_update
-* Update templates on plugin update.
-* If plugin versions do not match or the plugin has been updated and we need to update our templates.
+* If WP option plugin version do not match or the plugin has been updated and we need to update our templates.
 *
 * @since 1.0.0
 */
 
-add_action('admin_init', 'ewpq_core_update');
 function ewpq_core_update() {  
 	global $wpdb;
-	$table_name = $wpdb->prefix . "easy_query";	     
+	$installed_ver = get_option( "easy_query_version" ); // Get value from WP Option tbl
+	if ( $installed_ver != EQ_VERSION ) {
+      ewpq_run_update();	
+   }
+}
+add_action('plugins_loaded', 'ewpq_core_update');
+
+
+/**
+* ewpq_run_update
+* Run the update on our blogs
+*
+* @since 1.0.0
+*/
+
+function ewpq_run_update(){
+   global $wpdb;	
+   
+   if ( is_multisite()) {           
+   	$blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );   	
+      
+   	// Loop all blogs and run update routine   	
+      foreach ( $blog_ids as $blog_id ) {
+         switch_to_blog( $blog_id );
+         ewpq_update_template_files();
+         restore_current_blog();
+      }
+      
+   } else {
+      ewpq_update_template_files();
+   }
+      
+   update_option( "easy_query_version", EQ_VERSION ); // Update the WP Option tbl
+}
+
+
+/**
+* ewpq_update_template_files
+* Update routine for template files
+*
+* @since 1.0.0
+*/
+
+function ewpq_update_template_files(){
+   global $wpdb;	
+	$table_name = $wpdb->prefix . "easy_query";
+	$blog_id = $wpdb->blogid;	
 	 
-   // **********************************************
-   // If table exists
-   // **********************************************
-   if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") == $table_name) { 
-   	
-      // Compare template versions. 
-      // - if template versions do not match, update the templates with value(s) from DB	   
+	if($blog_id > 1){	// Create template_ directories if they don't exist 
+	   $dir = EQ_PATH. 'core/templates_'. $blog_id;
+   	if( !is_dir($dir) ){
+         mkdir($dir);
+      }
+   }
+   
+	// Get all templates ($rows)
+   $rows = $wpdb->get_results("SELECT * FROM $table_name WHERE type = 'default' OR type = 'unlimited'"); 
+      
+   if($rows){
+      foreach( $rows as $row ) { // Loop $rows
          
-	   $version = $wpdb->get_var("SELECT pluginVersion FROM $table_name WHERE type = 'default'");	        
-	   if($version != EWPQ_VERSION){ // First, make sure versions do not match.
-		   //Write to template file
-		   $data = $wpdb->get_var("SELECT template FROM $table_name WHERE type = 'default'");
-			$f = EWPQ_TEMPLATE_PATH. 'default.php'; // File
-			$o = fopen($f, 'w+'); //Open file
-			$w = fwrite($o, $data); //Save the file
-			$r = fread($o, 100000); //Read it
-			fclose($o); //now close it
-	   }	    
-   }   
-    
-    // **********************************************
-    // If table DOES NOT exist, create it.	
-    // **********************************************
-    if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {	
-	   $template = '<li><?php if ( has_post_thumbnail() ) { the_post_thumbnail(array(100,100));}?><h3><a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a></h3><p class="entry-meta"><?php the_time("F d, Y"); ?></p><?php the_excerpt(); ?></li>';	
-		$sql = "CREATE TABLE $table_name (
-			id mediumint(9) NOT NULL AUTO_INCREMENT,
-			name text NOT NULL,
-			type longtext NOT NULL,
-			alias longtext NOT NULL,
-			template longtext NOT NULL,
-			pluginVersion text NOT NULL,
-			UNIQUE KEY id (id)
-		);";		
-		require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-		dbDelta( $sql );
-		
-		//Insert default data in newly created table
-      $wpdb->insert($table_name, array(
-         'name' => 'default', 
-         'type' => 'default', 
-         'alias' => '', 
-         'template' => $template, 
-         'pluginVersion' => EWPQ_VERSION,
-      ));
+         $template = $row->name; // Current template
+         
+         $data = $wpdb->get_var("SELECT template FROM $table_name WHERE name = '$template'");
+         
+         if($blog_id > 1)
+            $f = EQ_PATH. 'core/templates_'. $blog_id.'/'.$template.'.php';
+         else
+            $f = EQ_TEMPLATE_PATH. ''.$template.'.php';
+         
+         $o = fopen($f, 'w+'); // Open file or create it
+         $w = fwrite($o, $data);
+         fclose($o);
+      }
    }
 }
 
 
 
 /*
- * ewpq_admin_menu
+ * eq_admin_menu
  * Create Admin Menu
  *
- * @since 1.0.0
+ * @since 2.0.0
  */
 
-add_action( 'admin_menu', 'ewpq_admin_menu' );
-function ewpq_admin_menu() {  
-   $icon = 'dashicons-plus-alt';
-   $icon = EWPQ_ADMIN_URL . "/img/logo-16x16.png";
-   $ewpq_page = add_menu_page( // Settings/Main
+function eq_admin_menu() {  
+   
+   $eq_settings_page = add_submenu_page(
+      'options-general.php', 
       'Easy Query', 
       'Easy Query', 
       'edit_theme_options', 
       'easy-query', 
-      'ewpq_settings_page', 
-      $icon 
-   );
-   $ewpq_settings_page = add_submenu_page( // Settings
-      'easy-query', 
-      'Settings', 
-      'Settings', 
-      'edit_theme_options', 
-      'easy-query', 
-      'ewpq_settings_page'
-   ); 
-   $ewpq_template_page = add_submenu_page( // Templates
-      'easy-query', 
-      'Template', 
-      'Template', 
-      'edit_theme_options', 
-      'easy-query-templates', 
-      'ewpq_repeater_page'
-   ); 
-   $ewpq_shortcode_page = add_submenu_page( // Query Builder
-      'easy-query', 
-      'Custom Query Builder', 
-      'Query Builder', 
-      'edit_theme_options', 
-      'easy-query-custom-query-builder', 
-      'ewpq_query_builder_page'
-   ); 
-   $ewpq_examples_page = add_submenu_page( // Examples
-      'easy-query', 
-      'Examples', 
-      'Examples', 
-      'edit_theme_options', 
-      'easy-query-examples', 
-      'ewpq_example_page'
-   ); 
-   
-   $ewpq_go_pro_page = add_submenu_page( // Go Pro
-      'easy-query', 
-      'Upgrade to Pro', 
-      '<span style="font-weight: 700;">&raquo; Upgrade to Pro<span>', 
-      'edit_theme_options', 
-      'easy-query-go-pro', 
-      'ewpq_go_pro_page'
-   );  	
-   
-   //Add our admin scripts
-   add_action( 'load-' . $ewpq_settings_page, 'ewpq_load_admin_js' );
-   add_action( 'load-' . $ewpq_template_page, 'ewpq_load_admin_js' );
-   add_action( 'load-' . $ewpq_shortcode_page, 'ewpq_load_admin_js' );
-   add_action( 'load-' . $ewpq_examples_page, 'ewpq_load_admin_js' );
-   add_action( 'load-' . $ewpq_go_pro_page, 'ewpq_load_admin_js' );
-   
+      'eq_settings_page'
+   ); 	
+   add_action( 'load-' . $eq_settings_page, 'ewpq_load_admin_js' );
+      
 }
+
+
+
+/*
+*  eq_settings_page
+*  Settings page
+*
+*  @since 2.0.0
+*/
+
+function eq_settings_page(){ 
+   if( isset($_GET['tab']) && $_GET['tab'] == 'settings'){
+      
+      $name = __('Settings', 'easy-query' );
+      $tab = 'settings';  
+   
+   }else if( isset($_GET['tab']) && $_GET['tab'] == 'template'){
+   
+      $name = __('Template', 'easy-query' );
+      $tab = 'template';  
+   
+   }else if( isset($_GET['tab']) && $_GET['tab'] == 'query-builder'){
+   
+      $name = __('Query Builder', 'easy-query' );
+      $tab = 'query-builder';  
+   
+   }elseif( isset($_GET['tab']) && $_GET['tab'] == 'examples'){
+   
+      $name = __('Examples', 'easy-query' );
+      $tab = 'examples';  
+   
+   }elseif( isset($_GET['tab']) && $_GET['tab'] == 'pro'){
+   
+      $name = __('Pro', 'easy-query' );
+      $tab = 'pro';  
+   
+   }else{
+   
+      $name = __('Settings', 'easy-query' );
+      $tab = 'settings';  
+   
+   }
+?>
+   <ul class="eq-nav">
+      <li class="eq-dashboard">
+         <a class="tab<?php if( !isset($_GET['tab'])) echo ' nav-tab-active'; ?>" href="options-general.php?page=<?php echo EQ_SLUG; ?>">
+            <span><?php _e('Dashboard', 'easy-query' ); ?></span>
+   		</a>
+      </li>
+      <li>
+		   <a class="tab<?php if( isset($_GET['tab']) && $tab == 'template') echo ' nav-tab-active'; ?>" href="options-general.php?page=<?php echo EQ_SLUG; ?>&tab=template">
+   		   <?php _e('Template', 'easy-query' ); ?>
+   		</a>
+      </li>
+      <li>
+		   <a class="tab<?php if( isset($_GET['tab']) && $tab == 'query-builder') echo ' nav-tab-active'; ?>" href="options-general.php?page=<?php echo EQ_SLUG; ?>&tab=query-builder">
+   		   <?php _e('Query Builder', 'easy-query' ); ?>
+   		</a>
+      </li>
+      <li>
+		   <a class="tab<?php if( isset($_GET['tab']) && $tab == 'examples') echo ' nav-tab-active'; ?>" href="options-general.php?page=<?php echo EQ_SLUG; ?>&tab=examples">
+   		   <?php _e('Examples', 'easy-query' ); ?>
+   		</a>
+      </li>
+		<li>
+         <a class="tab<?php if( isset($_GET['tab']) && $tab == 'pro') echo ' nav-tab-active'; ?>" id="nav-pro" href="options-general.php?page=<?php echo EQ_SLUG; ?>&tab=pro">
+            <?php _e('Pro', 'easy-query' ); ?>
+         </a>
+		</li>
+   </ul>
+	<div class="content" id="poststuff">
+	<?php 
+		if( !isset($_GET['tab'])){
+		   include_once( EQ_PATH . 'admin/views/settings.php');
+      }
+      if( isset($_GET['tab']) && $tab == 'shortcode'){
+         include_once( EQ_PATH . 'admin/views/shortcode.php');
+      }
+      if( isset($_GET['tab']) && $tab == 'template'){
+         include_once( EQ_PATH . 'admin/views/template.php');
+      }
+      if( isset($_GET['tab']) && $tab == 'query-builder'){
+         include_once( EQ_PATH . 'admin/views/query-builder.php');
+      } 
+      if( isset($_GET['tab']) && $tab == 'examples'){
+         include_once( EQ_PATH . 'admin/views/examples.php');
+      } 
+      if( isset($_GET['tab']) && $tab == 'pro'){
+         include_once( EQ_PATH . 'admin/views/pro.php');
+      } 
+   ?>
+   <div class="clear"></div>
+<?php }
 
 
 
@@ -186,171 +259,60 @@ function ewpq_load_admin_js(){
 function ewpq_enqueue_admin_scripts(){
 
    //Load Admin CSS
-   wp_enqueue_style( 'ewpq-admin-css', EWPQ_ADMIN_URL. 'css/admin.css');
-   wp_enqueue_style( 'ewpq-select2-css', EWPQ_ADMIN_URL. 'css/select2.css');
-   wp_enqueue_style( 'ewpq-font-awesome', '//netdna.bootstrapcdn.com/font-awesome/4.2.0/css/font-awesome.min.css');
+   wp_enqueue_style( 'ewpq-admin', EQ_ADMIN_URL. 'css/admin.css');
+  
+   //CodeMirror
    
-   //Load CodeMirror Syntax Highlighting if on Template and Query Builder  and Saved Query pages 
-   $screen = get_current_screen();
-   if ( in_array( 
-   	$screen->id, array(
-   	'easy-query_page_easy-query-templates',
-      'easy-query_page_easy-query-saved-queries',
-      'easy-query_page_easy-query-custom-query-builder',
-   	)
-   )){ 
-      //CodeMirror CSS
-      wp_enqueue_style( 'ewpq-codemirror-css', EWPQ_ADMIN_URL. 'codemirror/lib/codemirror.css' );
+      // CSS
+      wp_enqueue_style( 'ewpq-codemirror-css', EQ_ADMIN_URL. 'codemirror/lib/codemirror.css' );
             
-      //CodeMirror JS
-      wp_enqueue_script( 'ewpq-codemirror', EWPQ_ADMIN_URL. 'codemirror/lib/codemirror.js' );    
-      wp_enqueue_script( 'ewpq-codemirror-matchbrackets', EWPQ_ADMIN_URL. 'codemirror/addon/edit/matchbrackets.js' );
-      wp_enqueue_script( 'ewpq-codemirror-htmlmixed', EWPQ_ADMIN_URL. 'codemirror/mode/htmlmixed/htmlmixed.js' );
-      wp_enqueue_script( 'ewpq-codemirror-xml', EWPQ_ADMIN_URL. 'codemirror/mode/xml/xml.js' );
-      wp_enqueue_script( 'ewpq-codemirror-javascript', EWPQ_ADMIN_URL. 'codemirror/mode/javascript/javascript.js' );
-      wp_enqueue_script( 'ewpq-codemirror-mode-css', EWPQ_ADMIN_URL. 'codemirror/mode/css/css.js' );
-      wp_enqueue_script( 'ewpq-codemirror-clike', EWPQ_ADMIN_URL. 'codemirror/mode/clike/clike.js' );
-      wp_enqueue_script( 'ewpq-codemirror-php', EWPQ_ADMIN_URL. 'codemirror/mode/php/php.js' );        
-   }
+      // JS
+      wp_enqueue_script( 'ewpq-codemirror', EQ_ADMIN_URL. 'codemirror/lib/codemirror.js' );    
+      wp_enqueue_script( 'ewpq-codemirror-matchbrackets', EQ_ADMIN_URL. 'codemirror/addon/edit/matchbrackets.js' );
+      wp_enqueue_script( 'ewpq-codemirror-htmlmixed', EQ_ADMIN_URL. 'codemirror/mode/htmlmixed/htmlmixed.js' );
+      wp_enqueue_script( 'ewpq-codemirror-xml', EQ_ADMIN_URL. 'codemirror/mode/xml/xml.js' );
+      wp_enqueue_script( 'ewpq-codemirror-javascript', EQ_ADMIN_URL. 'codemirror/mode/javascript/javascript.js' );
+      wp_enqueue_script( 'ewpq-codemirror-mode-css', EQ_ADMIN_URL. 'codemirror/mode/css/css.js' );
+      wp_enqueue_script( 'ewpq-codemirror-clike', EQ_ADMIN_URL. 'codemirror/mode/clike/clike.js' );
+      wp_enqueue_script( 'ewpq-codemirror-php', EQ_ADMIN_URL. 'codemirror/mode/php/php.js' );        
    
    //Load JS   
    wp_enqueue_script( 'jquery-form' );
-   wp_enqueue_script( 'ewpq-select2', EWPQ_ADMIN_URL. 'js/libs/select2.min.js', array( 'jquery' ));
-   wp_enqueue_script( 'ewpq-drops', EWPQ_ADMIN_URL. 'js/libs/jquery.drops.js', array( 'jquery' ));
-   wp_enqueue_script( 'ewpq-admin', EWPQ_ADMIN_URL. 'js/admin.js', array( 'jquery' ));
-   wp_enqueue_script( 'ewpq-shortcode-builder', EWPQ_ADMIN_URL. 'shortcode-builder/js/shortcode-builder.js', array( 'jquery' ));
+   wp_enqueue_script( 'ewpq-select2', EQ_ADMIN_URL. 'js/libs/select2.min.js', array( 'jquery' ));
+   wp_enqueue_script( 'ewpq-drops', EQ_ADMIN_URL. 'js/libs/jquery.drops.js', array( 'jquery' ));
+   wp_enqueue_script( 'ewpq-admin', EQ_ADMIN_URL. 'js/admin.js', array( 'jquery' ));
+   wp_enqueue_script( 'ewpq-shortcode-builder', EQ_ADMIN_URL. 'shortcode-builder/js/shortcode-builder.js', array( 'jquery' ));
 }
 
 
 
 /*
-*  ewpq_settings_page
-*  Settings page
+*  eq_filter_admin_footer_text
+*  Filter the WP Admin footer text only on Easy Query pages
 *
-*  @since 1.0.0
+*  @since 2.0
 */
 
-function ewpq_settings_page(){ 
-   include_once( EWPQ_PATH . 'admin/views/settings.php');
-}
-
-
-
-/*
-*  ewpq_repeater_page
-*  Custom Repeaters
-*
-*  @since 1.0.0
-*/
-
-function ewpq_repeater_page(){ 
-   include_once( EWPQ_PATH . 'admin/views/repeater-templates.php');
-}
-
-
-
-/*
-*  ewpq_query_builder_page
-*  Query Builder
-*
-*  @since 1.0.0
-*/
-
-function ewpq_query_builder_page(){ 
-   include_once( EWPQ_PATH . 'admin/views/query-builder.php');	
-}
-
-
-
-/*
-*  ewpq_go_pro
-*  Go Pro
-*
-*  @since 1.0.0
-*/
-
-function ewpq_go_pro_page(){ 
-   include_once( EWPQ_PATH . 'admin/views/go-pro.php');	
-}
-
-
-
-/*
-*  ewpq_example_page
-*  Examples Page
-*
-*  @since 1.0.0
-*/
-
-function ewpq_example_page(){ 
-   include_once( EWPQ_PATH . 'admin/views/examples.php');		
-}
-
-
-
-/*
-*  ewpq_get_template_list
-*  List our repeaters for selection on query builder page
-*
-*  @since 1.0
-*/
-
-function ewpq_get_template_list(){	
-   global $wpdb;
-	$table_name = $wpdb->prefix . "easy_query";
-	$rows = $wpdb->get_results("SELECT * FROM $table_name where type != 'default' AND type != 'saved'"); // Get all data
-   $i = 0;
-	foreach( $rows as $template )  {  
-	   // Get repeater alias, if avaialble	
-	   $i++;
-	   $name = $template->name;
-   	$template_alias = $template->alias;
-   	if(empty($template_alias)){
-   	   echo '<option name="'.$name.'" id="chk-'.$name.'" value="'.$name.'">Template #'. $i .'</option>';
-   	}else{				
-   	   echo '<option name="'.$name.'" id="chk-'.$name.'" value="'.$name.'">'.$template_alias.'</option>';    	
-   	}
-	}
-}
-
-
-
-/*
-*  ewpq_query_generator
-*  Get template data from database
-*
-*  @return   DB value
-*  @since 1.0.0
-*/
-
-function ewpq_query_generator(){ 
-   
-	if (current_user_can( 'edit_theme_options' )){
-   	
-      error_reporting(E_ALL|E_STRICT);   
-   	$nonce = $_POST["nonce"];
-      
-   	// Check our nonce, if they don't match then bounce!
-   	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
-   		die('Error - unable to verify nonce, please try again.');
-   		
-      $template = Trim(stripslashes($_POST["template"])); // template   
-      $f = EWPQ_TEMPLATE_PATH. ''. $template .'.php'; // file()   
-      
-   	$open_error = '<span class="saved-error"><b>'. __('Error Opening Template', EWPQ_NAME) .'</b></span>';
-      $open_error .= '<em>'. $f .'</em>';
-      $open_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the plugin directory', EWPQ_NAME);
-       
-   	$data = file_get_contents($f) or die($open_error); // Open file
-   	
-   	echo $data;   
-   	
-   	die();
-   	
-	}else {
-		echo __('You don\'t belong here.', EWPQ_NAME);
+function eq_filter_admin_footer_text( $text ) {	
+	$screen = eq_is_admin_screen();	
+	if(!$screen){
+		return;
 	}
 	
+	echo '<strong>Easy Query</strong> is made with <span style="color: #e25555;">♥</span> by <a href="https://connekthq.com" target="_blank" style="font-weight: 500;">Connekt</a>';
+}
+
+
+
+/*
+*  ewpq_pro_page
+*  Easy Query Pro
+*
+*  @since 2.0.0
+*/
+
+function ewpq_pro_page(){ 
+   include_once( EQ_PATH . 'admin/views/pro.php');
 }
 
 
@@ -366,6 +328,9 @@ function ewpq_query_generator(){
 function ewpq_save_repeater(){
    
    if (current_user_can( 'edit_theme_options' )){
+   
+      global $wpdb;
+   	$blog_id = $wpdb->blogid;
       
    	$nonce = $_POST["nonce"];
    	// Check our nonce, if they don't match then bounce!
@@ -377,36 +342,34 @@ function ewpq_save_repeater(){
    	$n = Trim(stripslashes($_POST["template"])); // Template name
    	$t = Trim(stripslashes($_POST["type"])); // Template type
    	$a = Trim(stripslashes($_POST["alias"])); // Template alias
-   	
-      $f = EWPQ_TEMPLATE_PATH. ''.$n .'.php'; // File
+      
+      if($blog_id > 1) // multisite
+         $f = EQ_PATH. 'core/templates_'. $blog_id.'/'.$n .'.php'; // File
+   	else
+   	   $f = EQ_TEMPLATE_PATH. ''.$n .'.php'; // File	   
    		
-      $o_error = '<span class="saved-error"><b>'. __('Error Opening File', EWPQ_NAME) .'</b></span>';
+      $o_error = '<span class="saved-error"><b>'. __('Error Opening File', 'easy-query') .'</b></span>';
       $o_error .= '<em>'. $f .'</em>';
-      $o_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
+      $o_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /easy-query/ plugin directory', 'easy-query');
       
-      $w_error = '<span class="saved-error"><b>'. __('Error Saving File', EWPQ_NAME) .'</b></span>';
+      $w_error = '<span class="saved-error"><b>'. __('Error Saving File', 'easy-query') .'</b></span>';
       $w_error .= '<em>'. $f .'</em>';
-      $w_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /ajax-load-more/ plugin directory', EWPQ_NAME);
+      $w_error .=  __('Please check your file path and ensure your server is configured to allow Easy Query to read and write files within the /easy-query/ plugin directory', 'easy-query');
       
-      // Open file
-   	$o = fopen($f, 'w+') or die($o_error); 
+      $o = fopen($f, 'w+') or die($o_error); // Open file
    	
-   	// Save/Write the file
-   	$w = fwrite($o, $c) or die($w_error);
+   	$w = fwrite($o, $c) or die($w_error); // Save/Write the file
    	
-   	// $r = fread($o, 100000); //Read it
    	fclose($o); //now close it
    	
-   	//Save to database
-   	global $wpdb;
    	$table_name = $wpdb->prefix . "easy_query";	
    	
       if($t === 'unlimited'){ // Unlimited Templates	  
-   	   $data_update = array('template' => "$c", 'alias' => "$a", 'pluginVersion' => EWPQ_VERSION);
+   	   $data_update = array('template' => "$c", 'alias' => "$a", 'pluginVersion' => EQ_VERSION);
    	   $data_where = array('name' => $n);
       }
       else{ // Custom Repeaters
-   	   $data_update = array('template' => "$c", 'pluginVersion' => EWPQ_VERSION);
+   	   $data_update = array('template' => "$c", 'pluginVersion' => EQ_VERSION);
    	   $data_where = array('name' => "default");
       }
       
@@ -416,13 +379,14 @@ function ewpq_save_repeater(){
    	if($w){
    	    echo '<span class="saved">Template Saved Successfully</span>';
    	} else {
-   	    echo '<span class="saved-error"><b>'. __('Error Writing File', EWPQ_NAME) .'</b></span><br/>Something went wrong and the data could not be saved.';
+   	    echo '<span class="saved-error"><b>'. __('Error Writing File', 'easy-query') .'</b></span><br/>Something went wrong and the data could not be saved.';
    	}
    	die();
-	
+		   	
 	}else {
-		echo __('You don\'t belong here.', EWPQ_NAME);
+		echo __('You don\'t belong here.', 'easy-query');
 	}
+	
 }
 
 
@@ -435,7 +399,7 @@ function ewpq_save_repeater(){
 *  @since 1.0.0
 */
 
-function ewpq_update_repeater(){   
+function ewpq_update_repeater(){
    
    if (current_user_can( 'edit_theme_options' )){
 
@@ -459,11 +423,10 @@ function ewpq_update_repeater(){
       echo $the_template; // Return repeater value
       
    	die();
-	   	
+		   	
 	}else {
-		echo __('You don\'t belong here.', EWPQ_NAME);
-	}
-	
+		echo __('You don\'t belong here.', 'easy-query');
+	}	
 }
 
 
@@ -480,36 +443,37 @@ function ewpq_get_tax_terms(){
    
    if (current_user_can( 'edit_theme_options' )){
       
-	$nonce = $_GET["nonce"];
-	// Check our nonce, if they don't match then bounce!
-	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
-		die('Get Bounced!');
-		
-	$taxonomy = (isset($_GET['taxonomy'])) ? $_GET['taxonomy'] : '';	
-	$tax_args = array(
-		'orderby'       => 'name', 
-		'order'         => 'ASC',
-		'hide_empty'    => false
-	);	
-	$terms = get_terms($taxonomy, $tax_args);
-	$returnVal = '';
-	if ( !empty( $terms ) && !is_wp_error( $terms ) ){		
-		$returnVal .= '<ul>';
-		foreach ( $terms as $term ) {
-			//print_r($term);
-			$returnVal .='<li><input type="checkbox" class="alm_element" name="tax-term-'.$term->slug.'" id="tax-term-'.$term->slug.'" data-type="'.$term->slug.'"><label for="tax-term-'.$term->slug.'">'.$term->name.'</label></li>';		
-		}
-		$returnVal .= '</ul>';		
-		echo $returnVal;
-		die();
-	}else{
-		echo "<p class='warning'>No terms exist within this taxonomy</p>";
-		die();
-	}
-	   	
+   	$nonce = $_GET["nonce"];
+   	// Check our nonce, if they don't match then bounce!
+   	if (! wp_verify_nonce( $nonce, 'ewpq_repeater_nonce' ))
+   		die('Get Bounced!');
+   		
+   	$taxonomy = (isset($_GET['taxonomy'])) ? $_GET['taxonomy'] : '';	
+   	$tax_args = array(
+   		'orderby'       => 'name', 
+   		'order'         => 'ASC',
+   		'hide_empty'    => false
+   	);	
+   	$terms = get_terms($taxonomy, $tax_args);
+   	$returnVal = '';
+   	if ( !empty( $terms ) && !is_wp_error( $terms ) ){		
+   		$returnVal .= '<ul>';
+   		foreach ( $terms as $term ) {
+   			//print_r($term);
+   			$returnVal .='<li><input type="checkbox" class="alm_element" name="tax-term-'.$term->slug.'" id="tax-term-'.$term->slug.'" data-type="'.$term->slug.'"><label for="tax-term-'.$term->slug.'">'.$term->name.'</label></li>';		
+   		}
+   		$returnVal .= '</ul>';		
+   		echo $returnVal;
+   		die();
+   	}else{
+   		echo "<p class='warning'>No terms exist within this taxonomy</p>";
+   		die();
+   	}
+		   	
 	}else {
-		echo __('You don\'t belong here.', EWPQ_NAME);
+		echo __('You don\'t belong here.', 'easy-query');
 	}
+	
 }
 
 
@@ -539,23 +503,23 @@ function ewpq_admin_init(){
 	
 	add_settings_field(  // Disable CSS
 		'_ewpq_disable_css', 
-		__('Disable CSS', EWPQ_NAME ), 
+		__('Disable CSS', 'easy-query' ), 
 		'_ewpq_disable_css_callback', 
 		'easy-wp-query', 
 		'ewpq_general_settings' 
 	);
 	
-	/*add_settings_field(  // Hide btn
+	add_settings_field(  // Hide btn
 		'_ewpq_hide_btn', 
-		__('Editor Button', EWPQ_NAME ), 
+		__('Editor Button', 'easy-query' ), 
 		'ewpq_hide_btn_callback', 
 		'easy-wp-query', 
 		'ewpq_general_settings' 
-	);*/
+	);
 	
 	add_settings_field(  // Load dynamic queries
 		'_ewpq_disable_dynamic', 
-		__('Dynamic Content', EWPQ_NAME ), 
+		__('Dynamic Content', 'easy-query' ), 
 		'ewpq_disable_dynamic_callback', 
 		'easy-wp-query', 
 		'ewpq_general_settings' 
@@ -564,16 +528,15 @@ function ewpq_admin_init(){
 }
 
 
-
 /*
 *  ewpq_general_settings_callback
 *  Some general settings text
 *
-*  @since 2.0.0
+*  @since 1.0.0
 */
 
 function ewpq_general_settings_callback() {
-    echo '<p>' . __('Customize your version of Easy Query by updating the fields below.', EWPQ_NAME) . '</p>';
+    echo '<p>' . __('Customize your version of Easy Query by updating the various settings below.', 'easy-query') . '</p>';
 }
 
 
@@ -581,7 +544,7 @@ function ewpq_general_settings_callback() {
 *  _ewpq_sanitize_settings
 *  Sanitize our form fields
 *
-*  @since 2.0.0
+*  @since 1.0.0
 */
 
 function _ewpq_sanitize_settings( $input ) {
@@ -602,7 +565,7 @@ function ewpq_hide_btn_callback(){
 	   $options['_ewpq_hide_btn'] = '0';
 	
 	$html = '<input type="hidden" name="ewpq_settings[_ewpq_hide_btn]" value="0" /><input type="checkbox" id="ewpq_hide_btn" name="ewpq_settings[_ewpq_hide_btn]" value="1"'. (($options['_ewpq_hide_btn']) ? ' checked="checked"' : '') .' />';
-	$html .= '<label for="ewpq_hide_btn">'.__('Hide Query Builder button in WYSIWYG editor.', EWPQ_NAME).'</label>';	
+	$html .= '<label for="ewpq_hide_btn">'.__('Hide Query Builder button in WYSIWYG editor.', 'easy-query').'</label>';	
 	
 	echo $html;
 }
@@ -610,9 +573,9 @@ function ewpq_hide_btn_callback(){
 
 /*
 *  _ewpq_disable_css_callback
-*  Diabale Ajax Load More CSS.
+*  Diabale Easy Query CSS.
 *
-*  @since 2.0.0
+*  @since 1.0.0
 */
 
 function _ewpq_disable_css_callback(){
@@ -622,7 +585,7 @@ function _ewpq_disable_css_callback(){
 	
 	$html = '<input type="hidden" name="ewpq_settings[_ewpq_disable_css]" value="0" />';
 	$html .= '<input type="checkbox" id="ewpq_disable_css_input" name="ewpq_settings[_ewpq_disable_css]" value="1"'. (($options['_ewpq_disable_css']) ? ' checked="checked"' : '') .' />';
-	$html .= '<label for="ewpq_disable_css_input">'.__('I want to use my own CSS styles', EWPQ_NAME).'<br/><span style="display:block;"><i class="fa fa-file-text-o"></i> &nbsp;<a href="'.EWPQ_URL.'/core/css/easy-query.css" target="blank">'.__('View Easy Query CSS', EWPQ_NAME).'</a></span></label>';
+	$html .= '<label for="ewpq_disable_css_input">'.__('I want to use my own CSS styles', 'easy-query').'<br/><span style="display:block;"><i class="fa fa-file-text-o"></i> &nbsp;<a href="'.EQ_URL.'/core/css/easy-query.css" target="blank">'.__('View Easy Query CSS', 'easy-query').'</a></span></label>';
 	
 	echo $html;
 }
@@ -642,8 +605,9 @@ function ewpq_disable_dynamic_callback(){
 	
 	$html =  '<input type="hidden" name="ewpq_settings[_ewpq_disable_dynamic]" value="0" />';
 	$html .= '<input type="checkbox" name="ewpq_settings[_ewpq_disable_dynamic]" id="_ewpq_disable_dynamic" value="1"'. (($options['_ewpq_disable_dynamic']) ? ' checked="checked"' : '') .' />';
-	$html .= '<label for="_ewpq_disable_dynamic">'.__('Disable dynamic population of categories, tags and authors in the Query Builder.<span style="display:block">Recommended only if you have an extraordinary number of categories, tags and/or authors.', EWPQ_NAME).'</label>';	
+	$html .= '<label for="_ewpq_disable_dynamic">'.__('Disable dynamic population of categories, tags and authors in the Query Builder.<span style="display:block">Recommended only if you have an extraordinary number of categories, tags and/or authors.', 'easy-query').'</label>';	
 	
 	echo $html;
 }
+
 

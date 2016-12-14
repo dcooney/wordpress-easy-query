@@ -2,6 +2,32 @@
 
 
 /*
+*  eq_excerpt()
+*  A custom excerpt for Easy Query
+*
+*  @since 2.0
+*/   
+
+// Get custom excerpt
+function eq_excerpt($limit, $after = null) {
+	$excerpt = explode(' ', get_the_excerpt(), $limit);
+	if (count($excerpt)>=$limit) {
+		array_pop($excerpt);
+		$excerpt = implode(" ",$excerpt).'...';
+	} else {
+		$excerpt = implode(" ",$excerpt);
+	}
+	$excerpt = preg_replace('`[[^]]*]`','',$excerpt);		
+	if($after)
+	   $excerpt = $excerpt . $after;
+	   
+	if($excerpt)
+	   echo '<p class="eq-excerpt">'.$excerpt.'</p>';
+}
+
+
+
+/*
 *  ewpq_get_current_template
 *  Get the current repeater template file
 *
@@ -10,19 +36,21 @@
 */
 
 function ewpq_get_current_template($template, $type) {
-	$include = '';
-   // If Custom Templates Add-on
-	if( $type == 'template_' ){
-		$include = EWPQ_TEMPLATE_PATH. ''.$template.'.php';      					
-		
-		if(!file_exists($include)) //confirm file exists        			
-		   $include = EWPQ_TEMPLATE_PATH . 'default.php'; 			
+   global $wpdb;
+	$blog_id = $wpdb->blogid;
 	
-	}
-	// Default repeater
-	else{				
-		$include = EWPQ_TEMPLATE_PATH . 'default.php';
-	}
+	$include = '';
+	
+	if($blog_id > 1){ // multisite
+      $include = EQ_PATH. 'core/templates_'. $blog_id.'/'.$template .'.php';
+      if(!file_exists($include)) //confirm file exists        			
+	      $include = EQ_PATH. 'core/templates_'. $blog_id.'/default.php';
+	}else{
+	   $include = EQ_TEMPLATE_PATH. ''.$template .'.php';   
+   } 					
+	
+	if(!file_exists($include)) //Global include fallback     			
+	   $include = EQ_TEMPLATE_PATH . 'default.php'; 		
 	
 	return $include;
 }

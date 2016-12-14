@@ -1,4 +1,4 @@
-<span class="toggle-all"><span class="inner-wrap"><em class="collapse"><?php _e('Collapse All', EWPQ_NAME); ?></em><em class="expand"><?php _e('Expand All', EWPQ_NAME); ?></em></span></span>
+<span class="toggle-all"><span class="inner-wrap"><em class="collapse"><?php _e('Collapse All', 'easy-query'); ?></em><em class="expand"><?php _e('Expand All', 'easy-query'); ?></em></span></span>
 
 <?php 
    $alm_options = get_option( 'ewpq_settings' );         
@@ -10,36 +10,37 @@
    
 
 <!-- Container Type -->
-<div class="row checkbox container_type" id="alm-container-type">
-   <h3 class="heading"><?php _e('Container Options', EWPQ_NAME); ?></h3>
+<div class="row checkbox container_type" id="eq-options">
+   <h3 class="heading"><?php _e('Options', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-         <h4><?php _e('Type', EWPQ_NAME); ?></h4>
-		 	<p><?php _e('Select the container type that will wrap your Easy Query templates.', EWPQ_NAME); ?></p>
+         <h4><?php _e('Type', 'easy-query'); ?></h4>
+		 	<p><?php _e('Select the container type that will wrap your Easy Query content.', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">	               
             <ul>
                 <li class="full">
                  <input class="alm_element" type="radio" name="container_type" value="ul" id="ul" checked="checked">
-                 <label for="ul"><?php _e('&lt;ul&gt;<span>&lt;!-- posts --&gt;</span>&lt;/ul&gt;', EWPQ_NAME); ?></label>
+                 <label for="ul"><?php _e('&lt;ul&gt;<span>&lt;!-- posts --&gt;</span>&lt;/ul&gt;', 'easy-query'); ?></label>
                 </li>
                 <li class="full">
                  <input class="alm_element" type="radio" name="container_type" value="ol" id="ol">
-                 <label for="ol"><?php _e('&lt;ol&gt;<span>&lt;!-- posts --&gt;</span>&lt;/ol&gt;', EWPQ_NAME); ?></label>
+                 <label for="ol"><?php _e('&lt;ol&gt;<span>&lt;!-- posts --&gt;</span>&lt;/ol&gt;', 'easy-query'); ?></label>
                 </li>
                 <li class="full">
                  <input class="alm_element" type="radio" name="container_type" value="div" id="div">
-                 <label for="div"><?php _e('&lt;div&gt;<span>&lt;!-- posts --&gt;</span>&lt;/div&gt;', EWPQ_NAME); ?></label>
+                 <label for="div"><?php _e('&lt;div&gt;<span>&lt;!-- posts --&gt;</span>&lt;/div&gt;', 'easy-query'); ?></label>
                 </li>
             </ul>
          </div>
       </div>
+      
       <div class="clear"></div>
       <hr/>
       <div class="section-title">
-         <h4><?php _e('Classes', EWPQ_NAME); ?></h4>
-		 	<p><?php _e('Target your content by adding custom classes to the container.', EWPQ_NAME); ?></p>
+         <h4><?php _e('Classes', 'easy-query'); ?></h4>
+		 	<p><?php _e('Target your content by adding custom classes to the container.', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">
@@ -47,34 +48,84 @@
          </div>
       </div>
    </div>
+</div>
+<!-- End Container Type -->
+
+<!-- Paging -->
+<div class="row checkbox container_type" id="eq-pagng">
+   <h3 class="heading"><?php _e('Paging', 'easy-query'); ?></h3>
+   <div class="expand-wrap">    
+      <div class="section-title">
+         <h4><?php _e('Enable', 'easy-query'); ?></h4>
+         <p><?php _e('Allow Easy Query to page content.<br/><em>e.g. Page: <a href="javascript:void(0);">1</a> <a href="javascript:void(0);">2</a> <a href="javascript:void(0);">3</a></em>', 'easy-query'); ?></p>
+		</div>
+      <div class="wrap paging">
+         <div class="inner">	               
+            <ul>
+                <li>
+                 <input class="alm_element" type="radio" name="enable_paging" value="true" id="enable_paging_true" checked="checked">
+                 <label for="enable_paging_true"><?php _e('True', 'easy-query'); ?></label>
+                </li>
+                <li>
+                 <input class="alm_element" type="radio" name="enable_paging" value="false" id="enable_paging_false">
+                 <label for="enable_paging_false"><?php _e('False', 'easy-query'); ?></label>
+                </li>
+            </ul>
+         </div>
+      </div>  
+      
+		<div class="call-out">
+   		<i class="fa fa-unlock"></i> <?php _e('Unlock pagination styles with', 'easy-query'); ?> <a target="_parent" href="https://connekthq.com/plugins/easy-query/"><?php _e('Easy Query Pro', 'easy-query'); ?></a>
+      </div>
+          
+   </div>
 </div>  
+<!-- End Paging -->
 
-
-<!-- Templates -->
-<div class="row template" id="alm-repeaters">   		
-   <h3 class="heading"><?php _e('Template', EWPQ_NAME); ?></h3>
+<!-- Template -->
+<div class="row input template" id="eq-template">
+   <h3 class="heading"><?php _e('Template', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-         <p><?php _e('Select which <a href="admin.php?page=easy-query-templates" target="_parent">template</a> you would like to use.', EWPQ_NAME); ?></p>
+		 	<p><?php _e('Select the Easy Query <a href="options-general.php?page=easy-query&tab=templates" target="_parent">template</a> you would like to use.', 'easy-query'); ?></p>
+		 </div>
+      <div class="wrap">
+         <div class="inner">
+	         <select id="template-select" class="alm_element" disabled="disabled">
+	            <option value="default" selected="selected">Default</option>
+	         </select>
+	      </div>
       </div>
-      <div class="wrap"><div class="inner">
-         <select id="template-select" disabled="disabled">
-            <option value="default" selected="selected">Default</option>
-         </select>
-      </div>
-   </div>   
    <?php               
    // Go Pro!
    if (!has_action('ewpq_display_templates')){
       echo '<div class="row no-brd">';
-      include( EWPQ_PATH . 'admin/includes/cta/extend.php');
+      include( EQ_PATH . 'admin/includes/cta/extend.php');
       echo '</div>';                  
    }
    ?>
+   </div>
 </div>
+<!-- End Templates -->
+      
+<!-- Posts Per Page -->
+<div class="row input posts_per_page" id="alm-post-page">
+   <h3 class="heading"><?php _e('Posts Per Page', 'easy-query'); ?></h3>
+   <div class="expand-wrap">
+      <div class="section-title">
+		 	<p><?php _e('Select the number of posts to load with each request.', 'easy-query'); ?></p>
+		 </div>
+      <div class="wrap">
+         <div class="inner">
+            <input type="number" class="alm_element numbers-only" name="display_posts-select" id="display_posts-select" step="1" min="-1" value="6">               
+         </div>
+      </div>
+   </div>
 </div>
+<!-- End Posts Per Page -->
 
 
+<!-- Post Types -->
 <?php
 // List registered post_types
 $pt_args = array(
@@ -83,10 +134,10 @@ $pt_args = array(
 $types = get_post_types($pt_args);
 if($types){
 	echo '<div class="row checkboxes post_types" id="alm-post-types">';   		
-	echo '<h3 class="heading">'.__('Post Types', EWPQ_NAME). '</h3>';
+	echo '<h3 class="heading">'.__('Post Types', 'easy-query'). '</h3>';
 	echo '<div class="expand-wrap">';
 	echo '<div class="section-title">';
-	echo '<p>'.__('Select Post Types to query.', EWPQ_NAME). '</p>';
+	echo '<p>'.__('Select Post Types to query.', 'easy-query'). '</p>';
 	echo '</div>';
 	echo '<div class="wrap"><div class="inner"><ul>';
     foreach( $types as $type ){
@@ -100,9 +151,11 @@ if($types){
     echo '</div>';
     echo '</div>';
 }
+?>
+<!-- End Post Types -->
 
-// List Categories
-
+<!-- Categories -->
+<?php
 if($disable_dynamic_content){
    $cats = 'null';
 }else{
@@ -110,13 +163,13 @@ if($disable_dynamic_content){
 }
 if($cats){ ?>		
 <div class="row checkboxes categories" id="alm-categories">
-   <h3 class="heading"><?php _e('Category', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Category', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
          <h4>Include</h4>
-         <p><?php _e('A comma separated list of categories to include by id. (8, 15, 22 etc...)', EWPQ_NAME); ?><br/>
-         &raquo; <a href="admin.php?page=easy-query-examples#example-category">
-         <?php _e('view example', EWPQ_NAME); ?></a></p>
+         <p><?php _e('A comma separated list of categories to include by id. (8, 15, 22 etc...)', 'easy-query'); ?><br/>
+         &raquo; <a href="options-general.php?page=easy-query&tab=examples#example-category">
+         <?php _e('view example', 'easy-query'); ?></a></p>
       </div>
       <div class="wrap">
          <div class="inner">            
@@ -138,8 +191,8 @@ if($cats){ ?>
       <hr/>
    
       <div class="section-title">         
-         <h4><?php _e('Exclude', EWPQ_NAME); ?></h4>
-         <p><?php _e('A comma separated list of categories to exclude by ID. (3, 12, 35 etc..)', EWPQ_NAME); ?></p>
+         <h4><?php _e('Exclude', 'easy-query'); ?></h4>
+         <p><?php _e('A comma separated list of categories to exclude by ID. (3, 12, 35 etc..)', 'easy-query'); ?></p>
       </div>
       <div class="wrap">
          <div class="inner">           
@@ -159,8 +212,11 @@ if($cats){ ?>
       </div>     
    </div>
 </div>
- 
- <?php }
+<!-- End Categories -->
+
+
+<!-- Tags -->
+<?php }
  
  // Tags	    
 if($disable_dynamic_content){
@@ -170,11 +226,11 @@ if($disable_dynamic_content){
 }
 if($tags){ ?>
 <div class="row checkboxes tags" id="alm-tags">
-	<h3 class="heading"><?php _e('Tag', EWPQ_NAME); ?></h3>
+	<h3 class="heading"><?php _e('Tag', 'easy-query'); ?></h3>
 	<div class="expand-wrap">
 		<div class="section-title">
-		<h4><?php _e('Include', EWPQ_NAME); ?></h4>
-		<p><?php _e('A comma separated list of tags to include by id. (199, 231, 80 etc...)', EWPQ_NAME); ?><br/>&raquo; <a href="admin.php?page=easy-query-examples#example-tag">view example</a></p>
+		<h4><?php _e('Include', 'easy-query'); ?></h4>
+		<p><?php _e('A comma separated list of tags to include by id. (199, 231, 80 etc...)', 'easy-query'); ?><br/>&raquo; <a href="options-general.php?page=easy-query&tab=examples#example-tag"><?php _e('view example', 'easy-query'); ?></a></p>
 		</div>
 		<div class="wrap">
 		   <div class="inner">
@@ -195,8 +251,8 @@ if($tags){ ?>
       <hr/>
    
       <div class="section-title">         
-         <h4><?php _e('Exclude', EWPQ_NAME); ?></h4>
-         <p><?php _e('A comma separated list of tags to exclude by ID. (30, 12, 99 etc..)', EWPQ_NAME); ?></p>
+         <h4><?php _e('Exclude', 'easy-query'); ?></h4>
+         <p><?php _e('A comma separated list of tags to exclude by ID. (30, 12, 99 etc..)', 'easy-query'); ?></p>
       </div>
       <div class="wrap">
          <div class="inner">           
@@ -217,50 +273,59 @@ if($tags){ ?>
   </div>
 </div>
 <?php } ?>
+<!-- End Tags -->
  
-
+ 
+<!-- Taxonomy -->
 <div class="row taxonomy" id="alm-taxonomy">
-	<h3 class="heading"><?php _e('Taxonomy', EWPQ_NAME); ?></h3>
+	<h3 class="heading"><?php _e('Taxonomy', 'easy-query'); ?></h3>
 	<div class="expand-wrap">
-		<div class="call-out"><i class="fa fa-unlock"></i> Unlock taxonomy queries with <a target="_parent" href="https://connekthq.com/plugins/easy-query/pro/">Easy Query Pro</a></div>
+		<div class="call-out">
+   		<i class="fa fa-unlock"></i> <?php _e('Unlock taxonomy queries with', 'easy-query'); ?> <a target="_parent" href="https://connekthq.com/plugins/easy-query/"><?php _e('Easy Query Pro', 'easy-query'); ?></a>
+      </div>
 	</div>	
 </div>
-
+<!-- End Taxonomy -->
+ 
 
 <!-- Date -->
 <div class="row input date" id="alm-date">
-   <h3 class="heading"><?php _e('Date', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Date', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-		 	<p><?php _e('Enter a year, month(number) and day to query by date archive.<br/>&raquo; <a href="admin.php?page=easy-query-examples#example-date">view example</a>', EWPQ_NAME); ?></p>
+		 	<p><?php _e('Enter a year, month(number) and day to query by date archive.<br/>&raquo; <a href="options-general.php?page=easy-query&tab=exampless#example-date">view example</a>', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">
             <div class="wrap-30">
                <?php $today = getdate(); ?>
-               <label for="input-year" class="full"><?php _e('Year:', EWPQ_NAME); ?></label>
+               <label for="input-year" class="full"><?php _e('Year:', 'easy-query'); ?></label>
                <input name="input-year" class="alm_element sm numbers-only" type="text" id="input-year" maxlength="4" placeholder="<?php echo $today['year']; ?>">
             </div>
             <div class="wrap-30">
-               <label for="input-month" class="full"><?php _e('Month:', EWPQ_NAME); ?></label>
+               <label for="input-month" class="full"><?php _e('Month:', 'easy-query'); ?></label>
                <input name="input-month" class="alm_element sm numbers-only" type="text" id="input-month" maxlength="2" placeholder="<?php echo $today['mon']; ?>">
             </div>
             <div class="wrap-30">
-               <label for="input-day" class="full"><?php _e('Day:', EWPQ_NAME); ?></label>
+               <label for="input-day" class="full"><?php _e('Day:', 'easy-query'); ?></label>
                <input name="input-day" class="alm_element sm numbers-only" type="text" id="input-day" maxlength="2" placeholder="<?php echo $today['mday']; ?>">
             </div>
          </div>
       </div>
    </div>
 </div>
+   
      
-
-<div class="row taxonomy" id="alm-taxonomy">
-	<h3 class="heading"><?php _e('Custom Fields (Meta Query', EWPQ_NAME); ?></h3>
+<!-- End Custom Fields -->
+<div class="row custom-fields" id="alm-custom-fields">
+	<h3 class="heading"><?php _e('Custom Fields (Meta Query)', 'easy-query'); ?></h3>
 	<div class="expand-wrap">
-		<div class="call-out"><i class="fa fa-unlock"></i> Unlock custom field queries with <a target="_parent" href="https://connekthq.com/plugins/easy-query/pro/">Easy Query Pro</a></div>
+		<div class="call-out">
+   		<i class="fa fa-unlock"></i> <?php _e('Unlock custom field queries with', 'easy-query'); ?> <a target="_parent" href="https://connekthq.com/plugins/easy-query/"><?php _e('Easy Query Pro', 'easy-query'); ?></a>
+      </div>
 	</div>	
 </div>
+<!-- End Custom Fields -->
 
 
 <?php // List Authors
@@ -271,15 +336,15 @@ if($disable_dynamic_content){
 }	   	
 if($authors){
 	echo '<div class="row checkboxes authors" id="alm-authors">';
-	echo '<h3 class="heading">' . __('Author', EWPQ_NAME) . '</h3>';
+	echo '<h3 class="heading">' . __('Author', 'easy-query') . '</h3>';
 	echo '<div class="expand-wrap">';
 	echo '<div class="section-title">';
-	echo '<p>' . __('Select an Author to query(by ID).', EWPQ_NAME) . '<br/>&raquo; <a href="admin.php?page=easy-query-examples#example-author">view example</a></p>';
+	echo '<p>' . __('Select an Author to query(by ID).', 'easy-query') . '<br/>&raquo; <a href="options-general.php?page=easy-query&tab=examples#example-author">view example</a></p>';
 	echo '</div>';
 	echo '<div class="wrap"><div class="inner">';
 	if(!$disable_dynamic_content){
 	   echo '<select class="alm_element" name="author-select" id="author-select">';
-		echo '<option value="" selected="selected">-- ' . __('Select Author', EWPQ_NAME) . ' --</option>';
+		echo '<option value="" selected="selected">-- ' . __('Select Author', 'easy-query') . ' --</option>';
 	   foreach( $authors as $author ){
          echo '<option name="chk-'.$author->user_login.'" id="chk-'.$author->user_login.'" value="'.$author->ID.'">'.$author->display_name.'</option>';
 	    }
@@ -292,17 +357,32 @@ if($authors){
    echo '</div>';
  }
 ?>    
- 
-<!-- Search term -->
-<div class="row input search-term" id="alm-search">
-   <h3 class="heading"><?php _e('Search Term', EWPQ_NAME); ?></h3>
+
+<!-- Custom Arguments -->
+<div class="row input custom-arguments" id="alm-custom-args">
+   <h3 class="heading"><?php _e('Custom Arguments', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-		 	<p><?php _e('Enter a search term to query.', EWPQ_NAME); ?></p>
+		 	<p><?php _e('A semicolon separated list of custom value:pair arguments.<br/><br/>e.g. tag_slug__and:design,development; event_display:upcoming. Default', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">
-            <input name="search-term" class="alm_element" type="text" id="search-term" value="" placeholder="<?php _e('Enter search term', EWPQ_NAME); ?>">
+            <input name="custom-args" class="alm_element" type="text" id="custom-args" value="" placeholder="<?php _e('event_display:upcoming', 'easy-query'); ?>">
+         </div>
+      </div>
+   </div>
+</div> 
+ 
+<!-- Search term -->
+<div class="row input search-term" id="alm-search">
+   <h3 class="heading"><?php _e('Search Term', 'easy-query'); ?></h3>
+   <div class="expand-wrap">
+      <div class="section-title">
+		 	<p><?php _e('Enter a search term to query.', 'easy-query'); ?></p>
+		 </div>
+      <div class="wrap">
+         <div class="inner">
+            <input name="search-term" class="alm_element" type="text" id="search-term" value="" placeholder="<?php _e('Enter search term', 'easy-query'); ?>">
          </div>
       </div>
    </div>
@@ -310,11 +390,11 @@ if($authors){
 
 <!-- Post Parameters -->
 <div class="row input exclude" id="alm-exclude-posts">
-   <h3 class="heading"><?php _e('Post Parameters', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Post Parameters', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
          <h4>Include</h4>
-		 	<p><?php _e('A comma separated list of post ID\'s to include in query.', EWPQ_NAME); ?></p>
+		 	<p><?php _e('A comma separated list of post ID\'s to include in query.', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">
@@ -326,7 +406,7 @@ if($authors){
       <hr/>
       <div class="section-title">
          <h4>Exclude</h4>
-		 	<p><?php _e('A comma separated list of post ID\'s to exclude from query.', EWPQ_NAME); ?><br/>&raquo; <a href="admin.php?page=easy-query-examples#example-exclude">view example</a></p>
+		 	<p><?php _e('A comma separated list of post ID\'s to exclude from query.', 'easy-query'); ?><br/>&raquo; <a href="options-general.php?page=easy-query&tab=examples#example-exclude"><?php _e('view example', 'easy-query'); ?></a></p>
 		 </div>
       <div class="wrap">
          <div class="inner">
@@ -338,10 +418,10 @@ if($authors){
 
 <!-- Post Status -->
 <div class="row input post-status" id="alm-post-status">
-   <h3 class="heading"><?php _e('Post Status', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Post Status', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-		 	<p><?php _e('Select status of the post.', EWPQ_NAME); ?></p>
+		 	<p><?php _e('Select status of the post.', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner">               
@@ -360,10 +440,10 @@ if($authors){
  
 <!-- Ordering -->
 <div class="row ordering" id="alm-order">
-   <h3 class="heading"><?php _e('Ordering', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Ordering', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-		 	<p><?php _e('Sort posts by Order and Orderby parameters.', EWPQ_NAME); ?></p>
+		 	<p><?php _e('Sort posts by Order and Orderby parameters.', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner half">
@@ -392,62 +472,17 @@ if($authors){
 
 <!-- Offset -->
 <div class="row input offset" id="alm-offset">
-   <h3 class="heading"><?php _e('Offset', EWPQ_NAME); ?></h3>
+   <h3 class="heading"><?php _e('Offset', 'easy-query'); ?></h3>
    <div class="expand-wrap">
       <div class="section-title">
-		 	<p><?php _e('Offset the initial WordPress query by <em>\'n\'</em> number of posts', EWPQ_NAME); ?></p>
+		 	<p><?php _e('Offset the initial WordPress query by <em>\'n\'</em> number of posts', 'easy-query'); ?></p>
 		 </div>
       <div class="wrap">
          <div class="inner"> 
-            <input type="number" class="alm_element numbers-only" name="offset-select" id="offset-select" step="1" min="0">
+            <input type="number" class="alm_element numbers-only" name="offset-select" id="offset-select" value="0" step="1" min="0">
          </div>
       </div>
    </div>
-</div> 
-
-
-
-   
-<!-- Paging -->
-<div class="row input paging" id="alm-paging">
-   <h3 class="heading"><?php _e('Paging', EWPQ_NAME); ?></h3>
-   <div class="expand-wrap">
-      <div class="section-title">
-		 	<p><?php _e('Enable Easy Query to page the results.<br/><em>e.g. Page: <a href="javascript:void(0);">1</a> <a href="javascript:void(0);">2</a> <a href="javascript:void(0);">3</a></em>', EWPQ_NAME); ?></p>
-		 </div>
-      <div class="wrap">
-         <div class="inner">	               
-            <ul>
-                <li>
-                 <input class="alm_element" type="radio" name="enable_paging" value="true" id="enable_paging_true" checked="checked">
-                 <label for="enable_paging_true"><?php _e('True', EWPQ_NAME); ?></label>
-                </li>
-                <li>
-                 <input class="alm_element" type="radio" name="enable_paging" value="false" id="enable_paging_false">
-                 <label for="enable_paging_false"><?php _e('False', EWPQ_NAME); ?></label>
-                </li>
-            </ul>
-         </div>
-      </div>
-   </div>
-</div> 
-
+</div>   
       
-<!-- Posts Per Page -->
-<div class="row input posts_per_page" id="alm-post-page">
-   <h3 class="heading"><?php _e('Posts Per Page', EWPQ_NAME); ?></h3>
-   <div class="expand-wrap">
-      <div class="section-title">
-		 	<p><?php _e('Select the number of posts to load with each request.', EWPQ_NAME); ?></p>
-		 </div>
-      <div class="wrap">
-         <div class="inner">
-            <input type="number" class="alm_element numbers-only" name="display_posts-select" id="display_posts-select" step="1" min="-1" value="6">               
-         </div>
-      </div>
-   </div>
-</div>
-   
-      
-<div class="clear"></div>  
-   
+<div class="clear"></div>    

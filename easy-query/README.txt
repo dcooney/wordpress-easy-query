@@ -1,19 +1,16 @@
-=== Easy Query - A Query Builder Plugin===
+=== Easy Query - WordPress Query Builder===
 Contributors: dcooney
 Donate link: https://connekthq.com/donate/
-Tags: query, query builder, wp_query, save query, query generator, generator, paging, paged, shortcode builder, shortcode, tags, category, post types, taxonomy, meta_query
+Tags: query, builder, wp_query, simple, generator, paging, paged, shortcode builder, shortcode, search, tags, category, post types,  post format, wmpl, archives, query builder
 Requires at least: 3.7
-Tested up to: 4.5.3
-Stable tag: 1.1
+Tested up to: 4.7
+Stable tag: 2.0
 License: GPLv2 or later
 License URI: http://www.gnu.org/licenses/gpl-2.0.html
 
 Easy Query is the fastest and simplest way to build WordPress queries without writing a single line of code.
 
 == Description ==
-
-As of October 21st, 2015 the free version **Easy Query** will no longer be supported.
-The plugin will continue to function as usual, however anyone wishing to receive updates and new features is encouraged to upgrade to [Easy Query Pro](https://connekthq.com/plugins/easy-query/).
 
 Create complex queries using our Custom Query Builder then add the generated shortcode to your pages via the content editor or directly into your template files using our WP_Query Generator.
 
@@ -151,25 +148,37 @@ How to install Easy Query.
 3. Query Generator
 
 
+
 == Changelog ==
 
-= 1.1 =
-* NEWS - As of October 21st, 2015 the free version Easy Query will no longer be supported. 
+= 2.0 = 
+** NEW - New look and Feel for 2017 :)
+** NEW - Updated paging styles and settings.
+** UPDATE - Improvements in template loading. 
+** UPDATE - Improved WP_Query. 
+
+= 1.1.1 = 
+** FIX ** Pagination not working.
+** Update ** Various UI Improvements.
+
+= 1.1.0 = 
+** NEW ** Updated Saved Queries to allow for title changes.
+** FIX ** Issue with saved queries not saving periodically.
+** UPDATE ** Various UI Updates and enhancements.
+** UPDATE ** Updated License activation form.
+
+= 1.0.5 =
+** FIX ** Updated custom classes being applied to multiple elements in the parsed shortcode. custom_classes param should only be applied to the direct parent of easy query items.
+** UPDATE ** Updating broken admin layout in WordPress 4.4
+
+= 1.0.4 =
+** NEW ** Added new shortcode parameter 'custom_args' which will let users pass custom query params. e.g. custom_args="post_parent:1745;tag_slug__and:array(design,development)"
 
 = 1.0.3 =
-* Security Update - We have added an extra layer of security verification around the saving of custom templates. 
+Security Update - We have added an extra layer of security verification around the saving of custom templates and queries.
 
 = 1.0.2 =
-* Fix for date query parameters. 
+Fix for date query parameters
 
-= 1.0.1 =
-* Updating multisite activation function. Easy Query install is now triggered when a new site is created. 
-
-= 1.0.0 =
-* Initial Easy Query Commit
-
-== Upgrade Notice ==
-
-* None 
-
-
+= 1.0 =
+Initial Release

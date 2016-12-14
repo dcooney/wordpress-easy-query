@@ -16,13 +16,13 @@ jQuery(document).ready(function($) {
 	}
 	
 	// Copy link on shortcode builder
-	$('.output-wrap .copy').click(function(){
+	$('.cta .copy').click(function(){
 		var c = $('#shortcode_output').html();
 		_ewpq_admin.copyToClipboard(c);
 	});
 	
 	// Copy link on repeater templates
-	$('.alm-dropdown .copy a').click(function(){
+	$('.alm-dropdown .copy a').on('click', function(e){
 		var container = $(this).closest('.repeater-wrap'), // find closet wrap
 			 el = container.data('name'); // get template name
 		
@@ -64,15 +64,24 @@ jQuery(document).ready(function($) {
 	*/
    
    _ewpq_admin.attachSidebar = function(){
-      var scrollT = $(window).scrollTop(),
-          target = 120;
-          
-      if(scrollT > target)
-         $('.table-of-contents').addClass('attached');
-      else
-         $('.table-of-contents').removeClass('attached');
+      if($('.table-of-contents').length){
+         
+         var scrollT = $(window).scrollTop(),
+             target = 70; 
+                  
+         if((theTop - scrollT) < target)
+            $('.table-of-contents').addClass('attached');
+         else
+            $('.table-of-contents').removeClass('attached');
+            
+      }
    }
-   _ewpq_admin.attachSidebar();
+      
+   if($('.table-of-contents').length){
+      $('body').scrollTop(0);
+      var theTop = $('.table-of-contents').offset().top;
+      _ewpq_admin.attachSidebar();
+   }
 	
 	
 	
@@ -82,7 +91,8 @@ jQuery(document).ready(function($) {
 	*  @since 1.0.0
 	*/ 
 	
-	$('.nav-tab-wrapper a').click(function(){
+	$('.nav-tab-wrapper a').click(function(e){
+   	e.preventDefault();
 	   var el = $(this),
 	       tab = $('.tab-content'),
 	       classname = 'nav-tab-active',
@@ -130,6 +140,19 @@ jQuery(document).ready(function($) {
 			$('.expand-wrap').slideUp(100, 'cnkt_easeInOutQuad');
 		}
    });
+   
+   
+   
+   /*
+   *  Back 2 Top
+   *
+   *  @since 2.0
+   */ 
+   $('.back2top a').on('click',  function(e){
+      e.preventDefault();
+      $('html,body').animate({ scrollTop: 0 }, 300);
+      return false; 
+   })
 	
 	
 });

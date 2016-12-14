@@ -1,9 +1,8 @@
 /*
  * Easy Query
- * http://wordpress.org/plugins/easy-query/
- * https://github.com/dcooney/easy-query
+ * https://connekthq.com/plugins/easy-query/
  *
- * Copyright 2015 Connekt Media - http://connekthq.com
+ * Copyright 2016 Connekt Media - http://connekthq.com
  * Free to use under the GPLv2 license.
  * http://www.gnu.org/licenses/gpl-2.0.html
  *
@@ -19,33 +18,41 @@
 */
 
 .wp-easy-query{}
-
-.wp-easy-query-posts  ul{   
+.wp-easy-query .wp-easy-query-posts ul{   
    margin: 0;
    padding: 0;
 }
-.wp-easy-query-posts ul > li{
-   background: none;
-   margin: 0 0 30px;
-   padding: 0 0 0 120px;
-   overflow: hidden;
+.wp-easy-query .wp-easy-query-posts ul > li{
+   background: none; 
+   margin: 0 0 40px;
+   padding: 0 0 0 140px;
+   display: block;
    position: relative;
    list-style: none;
+   min-height: 120px;
 }				
-.wp-easy-query-posts ul li.no-img{
-   padding: 0;   	
+.wp-easy-query .wp-easy-query-posts ul > li.no-img{
+   padding: 0;
+   min-height: 0;   	
 }
-.wp-easy-query-posts ul li img{
+.wp-easy-query ul > li > img.wp-post-image{
    position: absolute;
    left: 0;
-   top: 0;			
+   top: 0;
+   border-radius: 2px;	
+   max-width: 120px;		
 }	
+.wp-easy-query ul > li > p.entry-meta{
+   text-align: left;
+   opacity: 0.75;
+   margin: 0 0 15px;
+}
 	
 
 /*
 *  Paging Styles
 *
-*  @since 1.0.0
+*  @since 2.0.0
 */
 
 .wp-easy-query-paging{
@@ -85,5 +92,21 @@
       .wp-easy-query-paging ul li a{
          display: block;
          padding: 4px 2px;
-      }  
+      } 
+      
+
+/* Small Mobile */   
+
+@media screen and (max-width: 480px){	
+   
+   .wp-easy-query .wp-easy-query-posts ul > li{
+      padding: 0 0 0 85px;
+      min-height: 70px;
+      margin-bottom: 30px;
+   }
+   .wp-easy-query ul > li > img.wp-post-image{
+      max-width: 70px;		
+   }	
+   
+}      
 		

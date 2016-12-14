@@ -1,19 +1,20 @@
 <?php
 /*
-Plugin Name: Easy Query
+Plugin Name: Easy Query Lite
 Plugin URI: https://connekthq.com/plugins/easy-query/
-Description: A query builder plugin for WordPress
+Description: A query builder plugin for WordPress.
 Author: Darren Cooney
 Twitter: @KaptonKaos
 Author URI: https://connekthq.com
-Version: 1.1
+Version: 2.0
 License: GPL
 Copyright: Darren Cooney & Connekt Media
-
 */	
 	
-define('EWPQ_VERSION', '1.1');
-define('EWPQ_RELEASE', 'June 24, 2016');
+define('EQ_VERSION', '2.0');
+define('EQ_RELEASE', 'December 14, 2016');
+
+
 
 /*
 *  ewpq_install
@@ -22,20 +23,57 @@ define('EWPQ_RELEASE', 'June 24, 2016');
 *  @since 1.0.0
 */
 
-register_activation_hook( __FILE__, 'ewpq_install_lite' );
-add_action( 'wpmu_new_blog', 'ewpq_install_lite' );
+register_activation_hook( __FILE__, 'eq_install' );
+add_action( 'wpmu_new_blog', 'eq_install' );
+function eq_install($network_wide) {   	
+	global $wpdb;	
+	add_option( "easy_query_version", EQ_VERSION ); // Add to WP Option tbl	
+	
+   if ( is_multisite() && $network_wide ) {      
+      
+      // Get all blogs in the network and activate plugin on each one
+      $blog_ids = $wpdb->get_col( "SELECT blog_id FROM $wpdb->blogs" );
+      foreach ( $blog_ids as $blog_id ) {
+         switch_to_blog( $blog_id );
+         eq_create_table();
+         restore_current_blog();
+      }
+   } else {
+      eq_create_table();
+   } 		
+}
 
-function ewpq_install_lite() {
+function eq_create_table(){
    
    if(is_plugin_active('easy-query-pro/easy-query-pro.php'))
-      die('You must de-activate Easy Query Pro before activating Easy Query.');  	
-   
+      die(__('You must de-activate Easy Query Pro before activating Easy Query.', 'easy-query'));
+            
+      
 	global $wpdb;	
 	$table_name = $wpdb->prefix . "easy_query";
+	$blog_id = $wpdb->blogid;
 	
-	$template = '<li <?php if (!has_post_thumbnail()) { ?> class="no-img"<?php } ?>><?php if ( has_post_thumbnail() ) { the_post_thumbnail(array(100,100));}?><h3><a href="<?php the_permalink(); ?>" title="<?php the_title(); ?>"><?php the_title(); ?></a></h3><p class="entry-meta"><?php the_time("F d, Y"); ?></p><?php the_excerpt(); ?></li>';	
-		
-	//Create table, if it doesn't already exist.	
+	$template = '<li <?php if (!has_post_thumbnail()) { ?> class="no-img"<?php } ?>><?php if ( has_post_thumbnail() ) { the_post_thumbnail("eq-thumbnail");}?><h3><a href="<?php the_permalink(); ?>"><?php the_title(); ?></a></h3><p class="entry-meta"><?php the_time("F d, Y"); ?></p><?php the_excerpt(); ?></li>';
+	
+	
+	/* 
+    * Multisite
+    * If multisite blog and it's not id = 1, create new folder and default template 
+    *
+    */
+   if($blog_id > 1){	   
+	   $dir = EQ_PATH. 'core/templates_'. $blog_id;
+   	if( !is_dir($dir) ){
+         mkdir($dir);
+         $tmp = fopen($dir.'/default.php', 'w');
+			$w = fwrite($tmp, $template);
+			fclose($myfile);
+   	}
+	}   	
+	
+	/* 
+    * Create table if it doesn't already exist.	 
+    */
 	if($wpdb->get_var("SHOW TABLES LIKE '$table_name'") != $table_name) {	
 		$sql = "CREATE TABLE $table_name (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
@@ -55,9 +93,10 @@ function ewpq_install_lite() {
          'type' => 'default', 
          'alias' => '', 
          'template' => $template,
-         'pluginVersion' => EWPQ_VERSION,
+         'pluginVersion' => EQ_VERSION,
       ));
-	}			
+	}	
+	
 }
 
 
@@ -67,67 +106,89 @@ if( !class_exists('EasyQuery') ):
 		
    	function __construct(){	   
    	
-   		define('EWPQ_PATH', plugin_dir_path(__FILE__));
-   		define('EWPQ_TEMPLATE_PATH', plugin_dir_path(__FILE__).'core/templates/');
-   		define('EWPQ_URL', plugins_url('', __FILE__));
-   		define('EWPQ_ADMIN_URL', plugins_url('admin/', __FILE__));
-   		define('EWPQ_NAME', 'easy_query');
-   		define('EWPQ_TITLE', 'Easy Query (Lite Version)');	
-   		define('EWPQ_TAGLINE', 'Create complex WordPress queries in seconds - it\'s that easy!');		
+   		define('EQ_PATH', plugin_dir_path(__FILE__));
+   		define('EQ_PAGING', plugin_dir_path(__FILE__).'core/paging.php');
+   		define('EQ_TEMPLATE_PATH', plugin_dir_path(__FILE__).'core/templates/');
+   		define('EQ_URL', plugins_url('', __FILE__));
+   		define('EQ_ADMIN_URL', plugins_url('admin/', __FILE__));
+   		define('EQ_NAME', 'easy_query');
+   		define('EQ_SLUG', 'easy-query');
+   		define('EQ_PRO_URL', 'https://connekthq.com/plugins/easy-query/');
+   		define('EQ_TITLE', 'Easy Query Lite');	
+   		define('EQ_TAGLINE', 'Create complex WordPress queries with the click of a button!');		
    		
-   		add_action( 'wp_enqueue_scripts', array(&$this, 'ewpq_enqueue_scripts') );			
-   		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array(&$this, 'ewpq_action_links') );   
-   		add_shortcode( 'easy_query', array(&$this, 'ewpq_shortcode') );	     		
-   		add_filter( 'widget_text', 'do_shortcode' ); // Allow shortcodes in widget areas  		
-   		load_plugin_textdomain( 'easy-wp-query', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' ); // load text domain
-   		include_once( EWPQ_PATH . 'core/functions.php') ;// Include Easy Query core functions  		
-   		$this->ewpq_before_theme(); // includes WP admin core	
+   		add_action( 'wp_enqueue_scripts', array(&$this, 'eq_enqueue_scripts') ); // scripts		
+   		add_filter( 'plugin_action_links_' . plugin_basename(__FILE__), array(&$this, 'eq_action_links') ); // dashboard links
+   		add_filter( 'widget_text', 'do_shortcode' ); // Allow shortcodes in widget areas   			
+   		add_action( 'after_setup_theme',  array(&$this, 'eq_image_sizes') ); // Add image sizss   	   		
+   		load_plugin_textdomain( 'easy-query', false, dirname( plugin_basename( __FILE__ ) ) . '/lang/' ); // load text domain
+   		add_shortcode( 'easy_query', array(&$this, 'ewpq_shortcode') ); // [easy_query]   		
+   		
+   		$this->eq_includes();	
    		
    	}	
    		
+   		
    	
    	/*
-   	*  ewpq_before_theme
+   	*  eq_includes
    	*  Load these files before the theme loads
    	*
    	*  @since 1.0.0
    	*/
    	
-   	function ewpq_before_theme(){
+   	function eq_includes(){
    		if( is_admin()){
-   			//include_once('admin/editor/editor.php');
+   			include_once('admin/editor/editor.php');
    			include_once('admin/admin.php');
-   		}		
+   			include_once('admin/admin-helpers.php');
+   		}
+   		include_once( EQ_PATH . 'core/functions.php');		
       }
       
+      
+      
    	/*
-   	*  ewpq_action_links
+   	*  eq_action_links
    	*  Add plugin action links to WP plugin screen
    	*
    	*  @since 1.0.0
    	*/   
       
-      function ewpq_action_links( $links ) {
-         $links[] = '<a href="'. get_admin_url(null, 'admin.php?page=easy-query') .'">Settings</a>';
-         $links[] = '<a href="'. get_admin_url(null, 'admin.php?page=easy-query-custom-query-builder') .'">Query Builder</a>';
+      function eq_action_links( $links ) {
+         $links[] = '<a href="'. get_admin_url(null, 'options-general.php?page=easy-query') .'">'. __('Settings', 'easy-query').'</a>';
+         $links[] = '<a href="'. get_admin_url(null, 'options-general.php?page=easy-query&tab=query-builder') .'">'. __('Query Builder', 'easy-query').'</a>';
          return $links;
       }
    
    
    
    	/*
-   	*  ewpq_enqueue_scripts
+   	*  eq_enqueue_scripts
    	*  Enqueue our scripts and create our localize variables
    	*
    	*  @since 1.0.0
    	*/
    
-   	function ewpq_enqueue_scripts(){
+   	function eq_enqueue_scripts(){
    		$options = get_option( 'ewpq_settings' );
    		if(!isset($options['_ewpq_disable_css']) || $options['_ewpq_disable_css'] != '1'){
    			wp_enqueue_style( 'easy-query', plugins_url('/core/css/easy-query.css', __FILE__ ));
    		}
    	}
+   	
+   	
+   	
+   	/*
+		*  eq_image_sizes
+		*  Add default image size
+		*
+		*  @since 2.0.0
+		*/
+		
+		public function eq_image_sizes(){   
+			add_image_size( 'eq-thumbnail', 120, 120, true); // Custom thumbnail size
+		} 
    	
    
    
@@ -144,7 +205,7 @@ if( !class_exists('EasyQuery') ):
    		   'container' => 'ul',
    		   'classes' => '',
 				'posts_per_page' => '6',
-				'paging' => 'true',	
+				'paging' => 'true',
 				'template' => 'default',
 				'post_type' => 'post',
 				'post_format' => '',
@@ -162,9 +223,10 @@ if( !class_exists('EasyQuery') ):
 				'month' => '',
 				'day' => '',
 				'author' => '',
-				'search' => '',	
+				'search' => '',
+				'custom_args' => '',
 				'post__in' => '',
-				'post__not_in' => '',				
+				'post__not_in' => '',					
 				'post_status' => 'publish',					
 				'order' => 'DESC',
 				'orderby' => 'date',
@@ -206,6 +268,9 @@ if( !class_exists('EasyQuery') ):
    		// Search
    		$s = $a['search'];
    		
+   		// Custom Args
+   		$custom_args = $a['custom_args'];
+   		
    		// Date
    		$year = $a['year'];
    		$month = $a['month'];
@@ -232,18 +297,25 @@ if( !class_exists('EasyQuery') ):
    		   $lang = qtrans_getLanguage();  
    		   
    		
-      	// $args
       	$paged = (get_query_var('paged')) ? get_query_var('paged') : 1;
+      	$page = $paged - 1; // Our current page num
+      	
+      	// WP_Query $args
    		$args = array(
    			'post_type'             => $post_type,
    			'posts_per_page'        => $posts_per_page,
-   			'offset'                => $offset,
    			'order'                 => $order,
    			'orderby'               => $orderby,		
    			'post_status'           => $post_status,		
    			'ignore_sticky_posts'   => false,
    			'paged'                 => $paged,
    		);	
+   		
+   		
+   		// Offset
+   		if($offset > 0){
+      		$args['offset'] = $offset + ($posts_per_page*$page);
+   		}
    		
    		// Post Format & taxonomy
    		if(!empty($post_format) || !empty($taxonomy)){	
@@ -304,6 +376,23 @@ if( !class_exists('EasyQuery') ):
    		if(!empty($s)){
    			$args['s'] = $s;
    		}  
+   		
+   		// Custom Args      
+   		if(!empty($custom_args)){
+   			$custom_args_array = explode(";",$custom_args); // Split the $custom_args at ','
+   			foreach($custom_args_array as $argument){ // Loop each $argument        			 
+      			$argument = preg_replace('/\s+/', '', $argument); // Remove all whitespace 	      				
+   			   $argument = explode(":",$argument);  // Split the $argument at ':' 
+   			   $argument_arr = explode(",", $argument[1]);  // explode $argument[1] at ','
+   			   if(sizeof($argument_arr) > 1){
+   			      $args[$argument[0]] = $argument_arr;
+   			   }else{
+   			      $args[$argument[0]] = $argument[1];      			   
+   			   }
+   			   
+   			   
+   			}
+   		}
    	   
          // Meta_key, used for ordering by meta value
          if(!empty($meta_key)){
@@ -338,15 +427,14 @@ if( !class_exists('EasyQuery') ):
    		   
    		   $eq_count = $paged * $posts_per_page - $posts_per_page; // Count items
    		   $output .= '<div class="wp-easy-query" data-total-posts="'. $eq_total_posts .'">';   		   
-   			$output .= '<div class="wp-easy-query-posts">';  	
-   			$output .= '<' . $container . ' class="'. $classes.'">';  		   
+   			$output .= '<div class="wp-easy-query-posts">';  
+   			$output .= '<' . $container . ' class="'. $classes.'">';   
    			while ($eq_query->have_posts()): $eq_query->the_post();	
    				$eq_count++;                
-   	         ob_start(); // As seen here - http://stackoverflow.com/a/1288634/921927
+   	         ob_start();
       			$file = ewpq_get_current_template($template, $template_type);
       			include($file);
-      			$output .= ob_get_contents();
-      			ob_end_clean();	   					
+      			$output .= ob_get_clean();	   					
             endwhile; 
             wp_reset_query();             
    			$output .= '</div>';
@@ -355,23 +443,22 @@ if( !class_exists('EasyQuery') ):
       		// Paging 
       		if($paging === 'true'){
          		ob_start();
-      			$paging = EWPQ_PATH . 'core/paging.php';
-      			include($paging);
-      			$output .= ob_get_contents();
-      			ob_end_clean();
+      			include(EQ_PAGING);
+      			$output .= ob_get_clean();
    			}	  
    			
    			$output .= '</div>';		
             
-         endif;		
+         endif;	
+         	
    		return $output;
    	}  	  	
    }
    
    
    /*
-   *  AjaxLoadMore
-   *  The main function responsible for returning the one true EasyWPQuery Instance to functions everywhere.
+   *  EasyQuery
+   *  The main function responsible for returning the one true EasyQuery Instance to functions everywhere.
    *
    *  @since 1.0.0
    */
@@ -392,3 +479,4 @@ if( !class_exists('EasyQuery') ):
    EasyQuery();
 
 endif; // class_exists check
+

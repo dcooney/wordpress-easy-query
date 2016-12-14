@@ -6,10 +6,10 @@
           h = document.body.clientHeight / 1.3;
       if(w > 900) w = 900;
       if(h > 600) h = 600;
-      editor.addCommand('mcebutton', function () {
+      editor.addCommand('easy_query_mcebutton', function () {
         editor.windowManager.open({
           title: "Easy Query: Query Builder",
-          file: ajaxurl + '?action=fscb', // file that contains HTML for our modal window
+          file: ajaxurl + '?action=ewpq', // file that contains HTML for our modal window
           width: w, // size of our window
           height: h , // size of our window
           inline: 1
@@ -21,7 +21,7 @@
       // Register Shortcode Button
       editor.addButton('ewpq_shortcode_button', {
         title: 'Insert Easy Query',
-        cmd: 'mcebutton',
+        cmd: 'easy_query_mcebutton',
         classes: 'widget btn easy-query-btn',
         image: url + '/../../img/add.png'
       });

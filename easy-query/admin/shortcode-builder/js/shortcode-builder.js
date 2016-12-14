@@ -63,7 +63,17 @@ jQuery(document).ready(function($) {
       
       var container_classes = $('.container_type input[name=classes]').val();
       if(container_classes !== '' && container_classes != undefined)
-         output += ' classes="'+container_classes+'"';    
+         output += ' classes="'+container_classes+'"';        
+      
+      // ---------------------------
+      // - Paging       
+      // ---------------------------      
+         
+      var paging = $('.paging input[name=enable_paging]:checked').val();
+      if(paging !== 'true' && paging != undefined){
+         output += ' paging="'+paging+'"';
+      }
+                   
       
       // ---------------------------
       // - Template
@@ -71,7 +81,19 @@ jQuery(document).ready(function($) {
       
       var template = $('.template select').val(); 
       if(template != '' && template != undefined && template != 'default') 
-         output += ' template="'+template+'"';          
+         output += ' template="'+template+'"';       
+      
+      // ---------------------------
+      // - Posts Per Page       
+      // ---------------------------
+      
+      var posts_per_page = $('.posts_per_page input').val();        
+      if(posts_per_page > -2 && posts_per_page != 6){
+         if(posts_per_page == 0)
+            output += ' posts_per_page="-1"';
+         else
+            output += ' posts_per_page="'+posts_per_page+'"';
+      }             
       
       // ---------------------------
       // - Post Types
@@ -129,45 +151,6 @@ jQuery(document).ready(function($) {
       var tag_not_in = $('.tags #tag-exclude-select').val();              
       if(tag_not_in !== '' && tag_not_in !== undefined && tag_not_in !== null) 
          output += ' tag__not_in="'+tag_not_in+'"';
-         
-         
-      // ---------------------------
-      // - Taxonomy Query     
-      // ---------------------------
-      
-      var tax = $('select#taxonomy-select').val(),
-      	  tax_operator = $('#tax-operator-select input[name=tax-operator]:checked').val();      	  
-      	          
-      if(tax !== '' && tax !== undefined){
-         output += ' taxonomy="'+tax+'"';
-         if($('select#taxonomy-select').hasClass('changed')){         	
-         	$('#taxonomy-extended').slideDown(200, 'cnkt_easeInOutQuad');
-         	get_tax_terms(tax);
-         	$('select#taxonomy-select').removeClass('changed');
-         }
-         
-		var tax_term_count = 0;
-		$('#tax-terms-container input[type=checkbox]').each(function(e){         
-			if($(this).is(":checked")) {
-				tax_term_count++;
-				if(tax_term_count>1){
-					output += ', ' + $(this).data('type');
-				}else{
-				if($('#tax-terms-container input').hasClass('changed'))
-					output += ' taxonomy_terms="'+$(this).data('type')+'';               
-				}
-			}
-		}); 
-		if(tax_term_count>0) 
-		 output += '"';
-         
-         //Get Tax Operator
-         if(tax_operator !== '' && tax_operator !== 'IN' && tax_operator !== undefined && tax_term_count !== 0){
-	        output += ' taxonomy_operator="'+tax_operator+'"';
-         }         
-      }else{
-	      $('#taxonomy-extended').slideUp(200, 'cnkt_easeInOutQuad');
-      }
 
       
       // ---------------------------
@@ -207,32 +190,14 @@ jQuery(document).ready(function($) {
       if(search !== '') 
          output += ' search="'+search+'"'; 
       
+      // ---------------------------
+      // - Custom Arguments      
+      // ---------------------------
       
-      // ---------------------------
-      // - Meta Key
-      // ---------------------------
-      var meta_key = $.trim($('input#meta-key').val()),
-          meta_value = $.trim($('input#meta-value').val()),
-          meta_compare = $('select#meta-compare').val();
-     
-      // Set meta_compare default value
-      if(meta_compare === '' || meta_compare == undefined)       
-          meta_compare = '=';
-          
-      if(meta_key !== '' && meta_key !== undefined){
-         if($('input#meta-key').hasClass('changed')){         	
-         	$('#meta-query-extended').slideDown(200, 'cnkt_easeInOutQuad');
-         	         	
-            output += ' meta_key="'+meta_key+'"';
-            output += ' meta_value="'+meta_value+'"';
-            
-            if(meta_compare !== '=')
-               output += ' meta_compare="'+meta_compare+'"';
-         }
-      }else{
-	      $('#meta-query-extended').slideUp(200, 'cnkt_easeInOutQuad');
-	      $('input#meta-key').removeClass('changed');
-      } 
+      var custom_args = $('.custom-arguments input').val();    
+      custom_args = $.trim(custom_args);       
+      if(custom_args !== '') 
+         output += ' custom_args="'+custom_args+'"'; 
          
          
       // ---------------------------
@@ -291,28 +256,6 @@ jQuery(document).ready(function($) {
       var offset = $('.offset input').val();   
       if(offset > 0) 
       	output += ' offset="'+offset+'"';  
-      
-      
-      // ---------------------------
-      // - Posts Per Page       
-      // ---------------------------
-      
-      var posts_per_page = $('.posts_per_page input').val();        
-      if(posts_per_page > -2 && posts_per_page != 6){
-         if(posts_per_page == 0)
-            output += ' posts_per_page="-1"';
-         else
-            output += ' posts_per_page="'+posts_per_page+'"';
-      }
-      
-      
-      // ---------------------------
-      // - Paging       
-      // ---------------------------      
-         
-      var paging = $('.paging input[name=enable_paging]:checked').val();
-      if(paging !== 'true' && paging != undefined)
-         output += ' paging="'+paging+'"'; 
       
       
       

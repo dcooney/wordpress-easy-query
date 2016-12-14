@@ -11,7 +11,7 @@
     zoom: 1;
     *display: inline;
     vertical-align: middle;
-    min-width: 60%;
+    min-width: 70%;
 }
 .inner.half .select2-container{
     min-width: 90%;
@@ -26,7 +26,7 @@
     padding: 0 10px;
     overflow: hidden;
     position: relative;
-    border: 1px solid #ccc;
+    border: 1px solid #e7e7e7;
     white-space: nowrap;
     line-height: 40px;
     color: #333;
@@ -100,7 +100,7 @@
     top: 100%;
     background: #fff;
     color: #000;
-    border: 1px solid #ccc;
+    border: 1px solid #e7e7e7;
     border-top: 0;
     border-radius: 0 0 2px 2px;
     box-shadow: 0 2px 1px rgba(0, 0, 0, 0.1);
@@ -109,7 +109,7 @@
 
 .select2-drop.select2-drop-above {
     margin-top: 1px;
-    border-top: 1px solid #ccc;
+    border-top: 1px solid #e7e7e7;
     border-bottom: 0;
     border-radius: 2px 2px 0 0;
     box-shadow: 0 -2px -1px rgba(0, 0, 0, 0.1);
@@ -186,7 +186,7 @@
       padding: 5px 10px 5px 24px;
       border-radius: 3px;
       background: #fff;
-      border: 1px solid #ccc;
+      border: 1px solid #e7e7e7;
       width: auto;
       position: relative;
    }
@@ -242,7 +242,7 @@
     cursor: pointer;
     min-height: 1em;
     padding: 10px 7px;
-    border-left: 4px solid transparent;
+    border-left: none !important;
     -webkit-touch-callout: none;
     -webkit-user-select: none;
     -khtml-user-select: none;
